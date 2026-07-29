@@ -1036,6 +1036,10 @@ ul {
     margin-top: 1rem;
   }
   
+  .content-body, .content-body * {
+    font-family: var(--font-family) !important;
+  }
+  
   .contact-card {
     background: white;
     border: 1px solid var(--parchment-2);
