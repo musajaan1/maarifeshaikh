@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">معارف شیخ - اسلامی مواد</title>
+  <meta name="description" id="metaDescription" content="معارف شیخ - مستند اسلامی مواد، بیانات اور مضامین کا مجموعہ">
+  <meta name="keywords" id="metaKeywords" content="اسلام, معارف, شیخ, بیانات, مضامین">
+  
+  <!-- Structured Data (Schema.org) Container -->
+  <script type="application/ld+json" id="seoSchema"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="index.css">
+  <!-- Custom Styles for Inline Search -->
+  <style>
+    #inlineSearchInput::placeholder {
+      color: #777;
+      opacity: 1;
+    }
+    .header-search-container {
+      background: var(--parchment-2) !important;
+      border: 1px solid #ccc !important;
+    }
+    .header-search-container.expanded {
+      width: 250px !important;
+      background: white !important; 
+      border-color: var(--teal) !important;
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1) !important;
+    }
+    .header-search-container.expanded #inlineSearchInput {
+      width: 100% !important;
+      opacity: 1 !important;
+      padding: 0 10px 0 0 !important;
+      color: var(--ink) !important;
+    }
+    .inline-result-item {
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s;
+    }
+    .inline-result-item:hover {
+      background: #f8f9fa;
+    }
+    .inline-result-item a {
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      display: block;
+    }
+    .inline-result-match {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    .inline-result-match mark {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--ink);
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="header-right" style="display: flex; align-items: center; gap: 10px;">
+        <a href="/" class="logo-link" id="headerLogoLink" title="ہوم پیج">
+          <div class="logo-circle">
+            <i class="fas fa-book-open"></i>
+          </div>
+        </a>
+        <div class="header-search-container" id="headerSearchContainer" style="position: relative; display: flex; align-items: center; border-radius: 20px; transition: all 0.3s ease; width: 38px; height: 38px;">
+          <button id="inlineSearchBtn" title="تلاش کریں" style="background: transparent; border: none; color: var(--ink); min-width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; outline: none;">
+            <i class="fas fa-search"></i>
+          </button>
+          <input type="text" id="inlineSearchInput" placeholder="تلاش کریں..." style="background: transparent; border: none; outline: none; width: 0; padding: 0; font-family: inherit; font-size: 0.95rem; opacity: 0; transition: all 0.3s ease; z-index: 1;">
+          <div id="inlineSearchResults" style="position: absolute; right: 0; top: 45px; width: 350px; background: white; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); display: none; z-index: 20; max-height: 400px; overflow-y: auto; text-align: right; color: var(--ink);"></div>
+        </div>
+      </div>
+      
+      <div class="header-middle" id="navMenu">
+        <nav>
+          <ul class="nav-links">
+            <li><a href="/">ہوم پیج</a></li>
+            <li><a href="/about">ہمارے بارے میں</a></li>
+            <li><a href="/contact">ہم سے رابطہ کریں</a></li>
+            <li class="nav-feedback"><a href="#" id="feedbackHeaderBtn"><i class="fas fa-comment-dots"></i> رائے دیں</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="header-left">
+        <button class="menu-toggle" aria-label="مینو" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area (SPA Root) -->
+  <main class="main-content" id="appRoot">
+    <!-- Content injected via JS -->
+  </main>
+
+  <!-- Templates -->
+  <template id="homeTemplate">
+    <!-- 1. Ad Section -->
+    <section class="banner-section" id="homeBannerSection">
+      <div class="banner-placeholder" id="homeBannerPlaceholder">
+        <span>اشتہار کی جگہ</span>
+      </div>
+    </section>
+
+    <!-- 2. Scrolling News Ticker -->
+    <section class="news-ticker-section">
+      <div class="ticker-label">تازہ ترین</div>
+      <div class="ticker-wrapper" dir="ltr">
+        <div class="ticker-content" id="homeNewsTicker">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Hero Banner Section (Formerly Latest Article) -->
+    <section class="hero-banner-section" id="homeArticleSection">
+      <div class="hero-banner-card">
+        <div class="hero-banner-image" id="homeArticleImage">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <div class="hero-banner-content">
+          <span class="hero-tag">نمایاں تحریر</span>
+          <h2 class="hero-title" id="homeArticleTitle">اسلام میں اخلاقیات کی اہمیت</h2>
+          <p class="hero-excerpt" id="homeArticleExcerpt">اس مضمون میں قرآن و حدیث کی روشنی میں حسن اخلاق کی اہمیت کا جائزہ لیا گیا ہے۔</p>
+          <div class="hero-meta">
+            <span class="hero-author" id="homeArticleAuthor"></span>
+            <span class="hero-author" id="homeArticleKalam"></span>
+            <span class="hero-author" id="homeArticleAwaz"></span>
+            <span class="hero-date" id="homeArticleDate"></span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <button class="btn-read-more hero-read-more" id="homeArticleReadMore" style="margin-top: 0;">مزید پڑھیں <i class="fas fa-arrow-left"></i></button>
+            
+            <!-- Home Article History Navigation -->
+            <div class="home-article-nav" id="homeArticleNav" style="display: none; align-items: center; gap: 10px;">
+              <button id="homePrevBtn" class="btn-read-more" style="background: transparent; color: var(--gold); border: 1px solid var(--gold); margin-top: 0; padding: 0.5rem 1rem;"><i class="fas fa-arrow-right"></i> پچھلا</button>
+              <span id="homeArticleCounter" style="color: var(--ink); font-weight: 500; font-size: 0.9rem; direction: ltr;"></span>
+              <button id="homeNextBtn" class="btn-read-more" style="background: transparent; color: var(--gold); border: 1px solid var(--gold); margin-top: 0; padding: 0.5rem 1rem;">اگلا <i class="fas fa-arrow-left"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Search and Category Bar -->
+    <section class="category-bar-section">
+      <div class="category-bar-container">
+        <button class="search-btn" id="searchBtn" aria-label="تلاش">
+          <i class="fas fa-search"></i>
+        </button>
+        <div class="category-buttons" id="homeCategoryButtons">
+          <!-- Categories will be dynamically generated by JS -->
+        </div>
+      </div>
+      <div class="search-input-container" id="searchInputContainer">
+        <input type="text" class="search-input" placeholder="یہاں تلاش کریں...">
+        <button class="search-submit" aria-label="تلاش کریں"><i class="fas fa-search"></i></button>
+      </div>
+    </section>
+  </template>
+
+  <template id="categoryTemplate">
+    <div class="page-container">
+      <div class="page-header">
+        <div class="breadcrumb" id="catBreadcrumb"></div>
+        <h1 class="page-title" id="catTitle"></h1>
+      </div>
+      <div class="category-content" id="sectionGrid"></div>
+    </div>
+  </template>
+
+  <template id="sectionTemplate">
+    <div class="page-container">
+      <div class="sticky-top-nav">
+        <div class="breadcrumb" id="secBreadcrumb"></div>
+        <button class="back-btn" id="backBtn" aria-label="واپس جائیں"><i class="fas fa-arrow-right"></i> واپس جائیں</button>
+      </div>
+      <div class="page-header">
+        <h1 class="page-title" id="secTitle"></h1>
+      </div>
+      <div class="item-list" id="itemList"></div>
+    </div>
+  </template>
+
+  <template id="aboutTemplate">
+    <div class="page-container narrow-page">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="#" class="nav-home">ہوم</a> / ہمارے بارے میں</div>
+        <h1 class="page-title">ہمارے بارے میں</h1>
+      </div>
+      <div class="content-body">
+        <p>یہ ویب سائٹ مستند اسلامی مواد، مضامین، کتب اور آڈیو بیانات کی فراہمی کے لیے قائم کی گئی ہے۔ ہمارا بنیادی مقصد دینِ اسلام کی صحیح اور مستند تعلیمات کو عوام الناس تک آسان فہم انداز میں پہنچانا ہے۔</p>
+        <p>اس پلیٹ فارم پر آپ کو علمائے کرام کے تحریر کردہ قیمتی مضامین، اہم دینی و اصلاحی کتب، روزمرہ مسائل کے حوالے سے رہنمائی اور بیانات یکجا ملیں گے۔ ہماری کوشش ہے کہ جدید دور کے تقاضوں کے مطابق دینی تعلیمات کو ڈیجیٹل شکل میں محفوظ اور عام کیا جائے۔</p>
+      </div>
+    </div>
+  </template>
+
+  <template id="singleItemTemplate">
+    <div class="page-container" style="max-width: 1300px;">
+      <div class="sticky-top-nav">
+        <div class="breadcrumb" id="singleBreadcrumb"></div>
+        <button class="back-btn" id="singleBackBtn" aria-label="واپس جائیں"><i class="fas fa-arrow-right"></i> واپس جائیں</button>
+      </div>
+      <div class="article-layout">
+        <aside class="article-sidebar" id="articleSidebar" style="display: none;">
+          <div class="toc-container">
+            <div class="sidebar-tabs" id="sidebarTabs" style="display: none;">
+              <button class="sidebar-tab active" data-target="tocList" id="tabToc">عنوانات</button>
+              <button class="sidebar-tab" data-target="timelineList" id="tabTimeline">تاریخیں</button>
+            </div>
+            
+            <h3 class="toc-title" id="tocTitle"><i class="fas fa-list-ul"></i> فہرستِ عنوانات</h3>
+            <ul class="toc-list" id="tocList"></ul>
+            
+            <h3 class="toc-title" id="timelineTitle" style="display: none;"><i class="fas fa-calendar-alt"></i> اہم تاریخیں</h3>
+            <ul class="toc-list" id="timelineList" style="display: none;"></ul>
+          </div>
+        </aside>
+        
+        <div class="article-main">
+          <div class="page-header">
+            <h1 class="page-title" id="singleTitle"></h1>
+            <div class="article-meta" id="singleMeta" style="justify-content: center; margin-top: 1rem;"></div>
+          </div>
+          <div class="content-body" id="singleContent"></div>
+          
+          <!-- Single Item History Navigation -->
+          <div class="home-article-nav" id="singleItemNav" style="display: none; justify-content: center; align-items: center; gap: 10px; max-width: 1140px; margin: 2rem auto 0; padding: 1.5rem; border-top: 1px solid #eee; background-color: #fff; border-radius: 8px;">
+            <button id="singlePrevBtn" class="btn-read-more" style="background: transparent; color: var(--gold); border: 1px solid var(--gold); margin-top: 0; padding: 0.5rem 1rem;"><i class="fas fa-arrow-right"></i> پچھلا</button>
+            <span id="singleArticleCounter" style="color: var(--ink); font-weight: 500; font-size: 0.9rem; direction: ltr;"></span>
+            <button id="singleNextBtn" class="btn-read-more" style="background: transparent; color: var(--gold); border: 1px solid var(--gold); margin-top: 0; padding: 0.5rem 1rem;">اگلا <i class="fas fa-arrow-left"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="contactTemplate">
+    <div class="page-container narrow-page">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="#" class="nav-home">ہوم</a> / ہم سے رابطہ کریں</div>
+        <h1 class="page-title">ہم سے رابطہ کریں</h1>
+      </div>
+      <div class="content-body">
+        <p>کسی بھی سوال، رہنمائی یا تجاویز کے لیے آپ ہم سے درج ذیل ذرائع سے رابطہ کر سکتے ہیں۔ ہم آپ کی آراء کا خیرمقدم کرتے ہیں۔</p>
+        <div class="contact-card">
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <span>info@maarifesheikh.com</span>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <span dir="ltr">+92 300 1234567</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>ویب سائٹ کا تعارف</h3>
+        <p id="footerAboutText">یہ ویب سائٹ مستند اسلامی مواد، مضامین، کتب اور آڈیو بیانات کی فراہمی کے لیے قائم کی گئی ہے۔ ہمارا مقصد دین کی صحیح تعلیمات کو عام کرنا ہے۔</p>
+      </div>
+      <div class="footer-col">
+        <h3>فوری لنکس</h3>
+        <ul>
+          <li><a href="#" onclick="routeTo('home'); return false;">ہوم پیج</a></li>
+          <li><a href="#" onclick="routeTo('about'); return false;">ہمارے بارے میں</a></li>
+          <li><a href="#" onclick="routeTo('contact'); return false;">ہم سے رابطہ کریں</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>زمرہ جات</h3>
+        <ul id="footerCategoriesList">
+          <li><a href="#" onclick="routeTo('category', 'articles'); return false;">مضامین</a></li>
+          <li><a href="#" onclick="routeTo('category', 'letters'); return false;">مکتوبات</a></li>
+          <li><a href="#" onclick="routeTo('category', 'posts'); return false;">پوسٹس</a></li>
+          <li><a href="#" onclick="routeTo('category', 'books'); return false;">کتب (PDF)</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>رابطہ کریں</h3>
+        <p><i class="fas fa-envelope"></i> <a href="mailto:info@maarifesheikh.com" id="footerEmailText">info@maarifesheikh.com</a></p>
+        <p><i class="fas fa-phone" style="transform: scaleX(-1);"></i> <span id="footerPhoneText" dir="ltr">+92 300 1234567</span></p>
+        <div class="social-icons">
+          <a href="#" class="social-icon" id="footerFbLink" target="_blank"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="social-icon" id="footerYtLink" target="_blank"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="social-icon" id="footerWaLink" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" class="social-icon" id="footerTwLink" target="_blank"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-icon" id="footerIgLink" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p id="footerCopyrightText">&copy; 2026 معارف شیخ۔ جملہ حقوق محفوظ ہیں۔</p>
+    </div>
+  </footer>
+
+  <!-- Feedback Modal -->
+
+  <div class="feedback-modal-overlay" id="feedbackModal">
+    <div class="feedback-modal">
+      <button class="feedback-close" id="feedbackCloseBtn">&times;</button>
+      <h2>اپنی قیمتی رائے دیجیے</h2>
+      <p>آپ کی تجاویز ہماری رہنمائی کے لیے اہم ہیں۔ ویب سائٹ کے حوالے سے کوئی بھی رائے یا خامی کی نشاندہی کرنا چاہیں تو ہمیں ضرور بتائیں۔</p>
+      
+      <form id="feedbackForm" class="feedback-form">
+        <div class="form-group">
+          <label for="fbName">نام (اختیاری):</label>
+          <input type="text" id="fbName" placeholder="اپنا نام لکھیں">
+        </div>
+        <div class="form-group">
+          <label for="fbEmail">ای میل (اختیاری):</label>
+          <input type="email" id="fbEmail" placeholder="اپنا ای میل لکھیں">
+        </div>
+        <div class="form-group">
+          <label for="fbMessage">پیغام / تجویز <span style="color:red;">*</span>:</label>
+          <textarea id="fbMessage" rows="4" placeholder="یہاں اپنا پیغام لکھیں..." required></textarea>
+        </div>
+        <button type="submit" class="btn-submit-feedback">پیغام بھیجیں <i class="fas fa-paper-plane"></i></button>
+      </form>
+      <div id="feedbackSuccessMessage" style="display: none; color: #16a085; margin-top: 15px; text-align: center; font-weight: bold;">
+        <i class="fas fa-check-circle"></i> آپ کا پیغام موصول ہو گیا ہے، جزاک اللہ!
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

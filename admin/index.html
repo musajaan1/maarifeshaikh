@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>معارف شیخ - ایڈمن پینل</title>
+  <link rel="stylesheet" href="/index.css"> <!-- Reuse some base styles -->
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <i class="fas fa-user-shield"></i>
+        <h2>ایڈمن پینل</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" id="nav-dashboard" class="active"><i class="fas fa-chart-line"></i> ڈیش بورڈ</a>
+        <a href="#" id="nav-feedback"><i class="fas fa-envelope"></i> پیغامات و تجاویز</a>
+        <a href="#" id="nav-add"><i class="fas fa-plus-circle"></i> نیا مواد شامل کریں</a>
+        <a href="#" id="nav-manage"><i class="fas fa-edit"></i> موجودہ مواد کا انتظام</a>
+        <a href="#" id="nav-manage-categories"><i class="fas fa-tags"></i> کیٹگریز کا انتظام</a>
+        <a href="#" id="nav-sections"><i class="fas fa-folder-open"></i> سیکشنز کا انتظام</a>
+        <a href="#" id="nav-home-article"><i class="fas fa-home"></i> ہوم پیج مضمون</a>
+        <a href="#" id="nav-ad"><i class="fas fa-ad"></i> اشتہار کا انتظام</a>
+        <a href="#" id="nav-news"><i class="fas fa-bullhorn"></i> تازہ ترین خبریں</a>
+        <a href="#" id="nav-footer"><i class="fas fa-shoe-prints"></i> فٹر کا انتظام</a>
+        <a href="#" id="nav-bg"><i class="fas fa-paint-roller"></i> پس منظر (Background)</a>
+        <a href="#" id="nav-security"><i class="fas fa-lock"></i> سیکیورٹی سیٹنگز</a>
+        <a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> ویب سائٹ دیکھیں</a>
+        <a href="#" id="nav-logout" style="color: #dc3545; margin-top: 1rem;"><i class="fas fa-sign-out-alt"></i> لاگ آؤٹ کریں</a>
+      </nav>
+    </aside>
+    
+    <main class="admin-main">
+      <div id="loadingMessage" class="loading">ڈیٹا لوڈ ہو رہا ہے...</div>
+      
+      <!-- Dashboard Section -->
+      <section id="section-dashboard" class="admin-section">
+        <div class="card">
+          <h2 class="card-title">ویب سائٹ کا خلاصہ (Dashboard)</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+            <div style="background: var(--parchment-2); padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px solid #ccc;">
+              <i class="fas fa-file-alt" style="font-size: 2rem; color: var(--teal); margin-bottom: 0.5rem;"></i>
+              <h3 style="margin-bottom: 0.5rem;">کل مضامین</h3>
+              <p id="dashTotalArticles" style="font-size: 1.5rem; font-weight: bold; color: var(--ink);">0</p>
+            </div>
+            <div style="background: var(--parchment-2); padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px solid #ccc;">
+              <i class="fas fa-book" style="font-size: 2rem; color: var(--gold); margin-bottom: 0.5rem;"></i>
+              <h3 style="margin-bottom: 0.5rem;">کل کتب</h3>
+              <p id="dashTotalBooks" style="font-size: 1.5rem; font-weight: bold; color: var(--ink);">0</p>
+            </div>
+            <div style="background: var(--parchment-2); padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px solid #ccc;">
+              <i class="fas fa-headphones" style="font-size: 2rem; color: var(--maroon); margin-bottom: 0.5rem;"></i>
+              <h3 style="margin-bottom: 0.5rem;">آڈیو بیانات</h3>
+              <p id="dashTotalAudios" style="font-size: 1.5rem; font-weight: bold; color: var(--ink);">0</p>
+            </div>
+            <div style="background: var(--parchment-2); padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px solid #ccc;">
+              <i class="fas fa-eye" style="font-size: 2rem; color: #10b981; margin-bottom: 0.5rem;"></i>
+              <h3 style="margin-bottom: 0.5rem;">کل ویوز (Views)</h3>
+              <p id="dashTotalViews" style="font-size: 1.5rem; font-weight: bold; color: var(--ink);">0</p>
+            </div>
+            <div style="background: var(--parchment-2); padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px solid #ccc;">
+              <i class="fas fa-envelope" style="font-size: 2rem; color: #f59e0b; margin-bottom: 0.5rem;"></i>
+              <h3 style="margin-bottom: 0.5rem;">نئے پیغامات</h3>
+              <p id="dashTotalMessages" style="font-size: 1.5rem; font-weight: bold; color: var(--ink);">0</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feedback / Messages Section -->
+      <section id="section-feedback" class="admin-section" style="display: none;">
+        <div class="card">
+          <h2 class="card-title">صارفین کے پیغامات (Messages & Feedback)</h2>
+          <div id="messagesList" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Messages will be rendered here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Add New Item Section -->
+      <section id="section-add" class="admin-section" style="display: none;">
+        <div class="card">
+          <h2 class="card-title">نیا مواد شامل کریں</h2>
+          <form id="addItemForm" class="admin-form">
+            <!-- Hidden inputs for edit tracking -->
+            <input type="hidden" id="editCatId" value="">
+            <input type="hidden" id="editSecId" value="">
+            <input type="hidden" id="editItemId" value="">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>کیٹگری منتخب کریں:</label>
+                <select id="catSelect" required>
+                  <option value="">-- منتخب کریں --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>سیکشن منتخب کریں:</label>
+                <select id="secSelect" required>
+                  <option value="">-- پہلے کیٹگری منتخب کریں --</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>عنوان (Title):</label>
+              <input type="text" id="itemTitle" required placeholder="مثلاً: اسلام میں اخلاقیات کی اہمیت">
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>مصنف (Author):</label>
+                <input type="text" id="itemAuthor" placeholder="مثلاً: مفتی محمد تقی عثمانی">
+              </div>
+              <div class="form-group">
+                <label>تاریخ (Date):</label>
+                <input type="text" id="itemDate" placeholder="مثلاً: 15 محرم الحرام، 1448 ھ">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>کلام (Kalam - اختیاری):</label>
+                <input type="text" id="itemKalam" placeholder="مثلاً: شاعر کا نام...">
+              </div>
+              <div class="form-group">
+                <label>آواز (Awaz - اختیاری):</label>
+                <input type="text" id="itemAwaz" placeholder="مثلاً: پڑھنے والے کا نام...">
+              </div>
+            </div>
+            
+            <div class="form-group" id="excerptGroup">
+              <label>تفصیل / خلاصہ (Excerpt) (اختیاری):</label>
+              <textarea id="itemExcerpt" rows="5" placeholder="یہاں مضمون کا کچھ حصہ یا خلاصہ لکھیں..."></textarea>
+            </div>
+
+            <!-- Dynamic Field: Rich Text Content (Articles, Letters) -->
+            <div class="form-group dynamic-field" id="richTextGroup" style="display: none;">
+              <label>مکمل تحریر (Full Content):</label>
+              <textarea id="richEditor"></textarea>
+            </div>
+
+            <!-- Dynamic Field: Image Upload (Posts) -->
+            <div class="form-group dynamic-field" id="imageUploadGroup" style="display: none;">
+              <label>تصویر اپلوڈ کریں (JPG/PNG):</label>
+              <input type="file" id="imageFile" accept="image/*">
+            </div>
+
+            <!-- Dynamic Field: File Upload / Link (Books, Audios) -->
+            <div class="form-group dynamic-field" id="fileOrLinkGroup" style="display: none;">
+              <label>فائل اپلوڈ کریں یا لنک درج کریں:</label>
+              <div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+                <label><input type="radio" name="fileTypeOption" value="upload" checked> فائل اپلوڈ کریں</label>
+                <label><input type="radio" name="fileTypeOption" value="link"> بیرونی لنک درج کریں</label>
+              </div>
+              
+              <div id="uploadInputContainer">
+                <input type="file" id="mediaFile" accept="application/pdf, audio/*">
+              </div>
+              <div id="linkInputContainer" style="display: none;">
+                <input type="url" id="mediaLink" placeholder="لنک درج کریں (مثلاً: https://archive.org/...)">
+              </div>
+            </div>
+
+            <!-- Draft & Publish System -->
+            <div class="form-group">
+              <label>حالت (Status):</label>
+              <select id="itemStatus" style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                <option value="published" selected>پبلش کریں (Published) - سب کو نظر آئے گا</option>
+                <option value="draft">مسودہ (Draft) - صرف ایڈمن کو نظر آئے گا</option>
+              </select>
+            </div>
+
+            <!-- Advanced SEO System -->
+            <div class="seo-section" style="margin-top: 1.5rem; padding: 1.5rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px;">
+              <h3 style="margin-bottom: 1rem; color: var(--teal); font-size: 1.2rem; cursor: pointer;" onclick="document.getElementById('seoFields').style.display = document.getElementById('seoFields').style.display === 'none' ? 'block' : 'none';">
+                <i class="fas fa-cog"></i> ایڈوانسڈ ایس ای او (Advanced SEO) - اختیاری ▼
+              </h3>
+              <div id="seoFields" style="display: none;">
+                <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">اگر آپ ان خانوں کو خالی چھوڑیں گے تو سسٹم خود بخود عنوان اور خلاصہ استعمال کر لے گا۔</p>
+                <div class="form-group">
+                  <label>SEO Title (عنوان):</label>
+                  <input type="text" id="itemSeoTitle" placeholder="مثلاً: اسلام میں اخلاقیات کی اہمیت - بہترین مضمون">
+                </div>
+                <div class="form-group">
+                  <label>SEO Description (تفصیل):</label>
+                  <textarea id="itemSeoDesc" rows="3" placeholder="مضمون کی مختصر تفصیل جو گوگل سرچ میں نظر آئے..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Keywords (الفاظ):</label>
+                  <input type="text" id="itemSeoKeywords" placeholder="مثلاً: اخلاقیات, اسلام, مفتی محمد تقی عثمانی (کوما سے الگ کریں)">
+                </div>
+              </div>
+            </div>
+            <br>
+            
+            <button type="submit" class="btn-submit" id="saveBtn"><i class="fas fa-save"></i> محفوظ کریں</button>
+          </form>
+          <div id="statusMessage" class="status-msg"></div>
+        </div>
+      </section>
+
+      <!-- Manage Items Section -->
+      <section id="section-manage" class="admin-section" style="display: none;">
+        <div class="card">
+          <h2 class="card-title">مواد کا انتظام</h2>
+          
+          <div class="filter-bar">
+            <div class="form-group">
+              <label>کیٹگری:</label>
+              <select id="manageCatSelect">
+                 <option value="">-- منتخب کریں --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>سیکشن:</label>
+              <select id="manageSecSelect">
+                <option value="">-- تمام --</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="manage-list" id="manageList">
+            <!-- Items injected here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Manage Categories Section -->
+      <section id="section-manage-categories" class="admin-section" style="display: none;">
+        <div class="card">
+          <h2 class="card-title">کیٹگریز کا انتظام</h2>
+          
+          <div class="admin-form" style="margin-bottom: 2rem;">
+            <h3>نئی کیٹگری بنائیں</h3>
+            <div class="form-row">
+              <div class="form-group" style="flex: 2;">
+                <label>نئی کیٹگری کا نام:</label>
+                <input type="text" id="newCategoryName" placeholder="مثلاً: ویڈیوز">
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label>کیٹگری کی قسم (Type):</label>
+                <select id="newCategoryType">
+                  <option value="article">مضامین (Text/RichText)</option>
+                  <option value="post">پوسٹس (Images)</option>
+                  <option value="book">کتب (PDF/Links)</option>
+                  <option value="audio">آڈیو بیانات (Audio Files/Links)</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-submit" id="addCategoryBtn"><i class="fas fa-plus"></i> کیٹگری شامل کریں</button>
+          </div>
+
+          <hr style="margin: 2rem 0; border-top: 1px solid #ddd;">
+
+          <h3>موجودہ کیٹگریز</h3>
+          <div class="manage-list" id="categoriesList">
+            <!-- Categories will be rendered here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Manage Sections Section -->
+      <section id="section-manage-sections" class="admin-section" style="display: none;">
+        <div class="card">
+          <h2 class="card-title">سیکشنز کا انتظام</h2>
+          
+          <div class="admin-form form-group" style="margin-bottom: 2rem;">
+            <label>کیٹگری منتخب کریں:</label>
+            <select id="manageSecCategorySelect">
+              <option value="">-- منتخب کریں --</option>
+            </select>
+          </div>
+
+          <div id="sectionsArea" style="display: none;">
+            <div class="admin-form" style="display: flex; gap: 1rem; margin-bottom: 2rem; align-items: stretch; flex-wrap: wrap;">
+              <input type="text" id="newSectionName" placeholder="نئے سیکشن کا نام (مثلاً: رنگ و نور جلد 1)" style="flex: 1; min-width: 250px;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--parchment); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--parchment-2);">
+                <label style="margin:0; font-size: 0.9rem; font-weight:bold;">رنگ:</label>
+                <input type="color" id="newSectionColor" title="فولڈر کا رنگ" value="#fbbf24" style="width: 40px; height: 35px; padding: 0; border: none; cursor: pointer; border-radius: 4px;">
+              </div>
+              <button class="btn-submit" id="addSectionBtn" style="white-space: nowrap;"><i class="fas fa-plus"></i> شامل کریں</button>
+            </div>
+
+            <div class="manage-list" id="sectionsList">
+              <!-- Sections injected here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Manage Home Article Section -->
+      <section id="section-home-article" class="admin-section" style="display: none;">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 class="card-title" style="margin-bottom: 0;">ہوم پیج مضمون</h2>
+            <button id="newHomeArticleBtn" class="btn-submit" style="width: auto; margin-top: 0; background-color: var(--teal);"><i class="fas fa-plus"></i> نیا مضمون شروع کریں</button>
+          </div>
+          
+          <form id="homeArticleForm" class="admin-form">
+            <input type="hidden" id="homeArticleEditIndex" value="-1">
+            <div class="form-group">
+              <label>عنوان (Title):</label>
+              <input type="text" id="homeTitle" required>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>مصنف (Author):</label>
+                <input type="text" id="homeAuthor">
+              </div>
+              <div class="form-group">
+                <label>تاریخ (Date):</label>
+                <input type="text" id="homeDate">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>تفصیل / خلاصہ (Excerpt) (اختیاری):</label>
+              <textarea id="homeExcerpt" rows="5"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>تصویر اپلوڈ کریں (اختیاری):</label>
+              <input type="file" id="homeImageFile" accept="image/*">
+              <div id="currentHomeImage" style="margin-top: 10px; display: flex; align-items: center; gap: 15px;"></div>
+            </div>
+
+            <div class="form-group">
+              <label>مکمل تحریر (Full Content):</label>
+              <textarea id="homeRichEditor"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>حالت (Status):</label>
+              <select id="homeStatus" style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                <option value="published" selected>پبلش کریں (Published)</option>
+                <option value="draft">مسودہ (Draft)</option>
+              </select>
+            </div>
+
+            <!-- Advanced SEO System -->
+            <div class="seo-section" style="margin-top: 1.5rem; padding: 1.5rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px;">
+              <h3 style="margin-bottom: 1rem; color: var(--teal); font-size: 1.2rem; cursor: pointer;" onclick="document.getElementById('homeSeoFields').style.display = document.getElementById('homeSeoFields').style.display === 'none' ? 'block' : 'none';">
+                <i class="fas fa-cog"></i> ایڈوانسڈ ایس ای او (Advanced SEO) - اختیاری ▼
+              </h3>
+              <div id="homeSeoFields" style="display: none;">
+                <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">اگر آپ ان خانوں کو خالی چھوڑیں گے تو سسٹم خود بخود عنوان اور خلاصہ استعمال کر لے گا۔</p>
+                <div class="form-group">
+                  <label>SEO Title (عنوان):</label>
+                  <input type="text" id="homeSeoTitle" placeholder="مثلاً: اسلام میں اخلاقیات کی اہمیت - بہترین مضمون">
+                </div>
+                <div class="form-group">
+                  <label>SEO Description (تفصیل):</label>
+                  <textarea id="homeSeoDesc" rows="3" placeholder="مضمون کی مختصر تفصیل جو گوگل سرچ میں نظر آئے..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Keywords (الفاظ):</label>
+                  <input type="text" id="homeSeoKeywords" placeholder="مثلاً: اخلاقیات, اسلام, مفتی محمد تقی عثمانی (کوما سے الگ کریں)">
+                </div>
+              </div>
+            </div>
+            <br>
+            
+            <button type="submit" class="btn-submit" id="saveHomeBtn"><i class="fas fa-save"></i> محفوظ کریں</button>
+          </form>
+          <div id="homeStatusMessage" class="status-msg"></div>
+
+          <hr style="margin: 2rem 0; border-top: 1px solid #ddd;">
+          <h3>ہوم پیج مضامین کی ہسٹری</h3>
+          <div class="manage-list" id="homeArticlesList">
+            <!-- Articles injected here via JS -->
+          </div>
+        </div>
+      </section>
+
+      <section id="section-ad" class="admin-section" style="display: none;">
+        <div class="card">
+          <h2 class="card-title">اشتہارات کا انتظام (Ads Management)</h2>
+          <div class="admin-form">
+            <p style="color: #666; margin-bottom: 1.5rem;">ہوم پیج پر نظر آنے والے اشتہارات کو یہاں سے اپڈیٹ کریں۔ اشتہار کا سائز تقریباً <strong>1140px چوڑا اور 150px اونچا</strong> ہونا چاہیے، اور فارمیٹ <strong>JPG یا PNG</strong> ہونا چاہیے۔</p>
+            <form id="adForm">
+              <div class="form-group" style="margin-bottom: 2rem;">
+                <label>اشتہار بدلنے کا وقت (سیکنڈز میں):</label>
+                <input type="number" id="adInterval" value="5" min="2" max="60" style="width: 150px;">
+              </div>
+              
+              <h3 style="margin-bottom: 1rem;">نیا اشتہار شامل کریں</h3>
+              <div class="form-row" style="align-items: flex-end; margin-bottom: 2rem;">
+                <div class="form-group" style="flex: 1;">
+                  <label>اشتہار کی تصویر:</label>
+                  <input type="file" id="adImageFile" accept="image/png, image/jpeg">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                  <label>لنک (اختیاری):</label>
+                  <input type="url" id="adLinkInput" placeholder="https://..." dir="ltr">
+                </div>
+                <button type="button" class="btn-submit" id="addAdBtn" style="width: auto; margin-bottom: 0;"><i class="fas fa-plus"></i> شامل کریں</button>
+              </div>
+              
+              <hr style="margin-bottom: 2rem; border-top: 1px solid #ddd;">
+              
+              <h3 style="margin-bottom: 1rem;">موجودہ اشتہارات</h3>
+              <div id="adsListContainer" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                <!-- Ads will be listed here -->
+              </div>
+              
+              <button type="submit" class="btn-submit" id="saveAdBtn"><i class="fas fa-save"></i> تمام سیٹنگز محفوظ کریں</button>
+            </form>
+            <div id="adStatusMessage" class="status-msg"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Manage News Ticker Section -->
+      <section id="section-news" class="admin-section" style="display: none;">
+        <div class="card">
+          <h2 class="card-title">تازہ ترین خبریں (News Ticker)</h2>
+          <div class="admin-form">
+            <p style="color: #666; margin-bottom: 1.5rem;">خبریں شامل کریں، رنگ اور رفتار سیٹ کریں، اور نیچے موجود لائیو پریویو میں تبدیلیاں فوراً دیکھیں۔</p>
+            
+            <form id="newsForm">
+              
+              <!-- Settings Grid -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 2rem; background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #e9ecef;">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label>چلنے کی رفتار (Speed): <span id="speedValue">15</span> سیکنڈز</label>
+                  <input type="range" id="newsSpeed" min="5" max="60" value="15" style="width: 100%;">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label>پس منظر کا رنگ (Background):</label>
+                  <input type="color" id="newsBgColor" value="#16a085" style="width: 100%; height: 38px; padding: 0; border: none; border-radius: 4px; cursor: pointer;">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label>ٹیکسٹ کا رنگ (Text):</label>
+                  <input type="color" id="newsTextColor" value="#ffffff" style="width: 100%; height: 38px; padding: 0; border: none; border-radius: 4px; cursor: pointer;">
+                </div>
+                <div class="form-group" style="grid-column: span 3; margin-bottom: 0; margin-top: 1rem;">
+                  <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="newsPauseHover" checked style="width: 20px; height: 20px;">
+                    جب صارف خبر پر ماؤس لائے تو خبر رک جائے (Pause on Hover)
+                  </label>
+                </div>
+              </div>
+
+              <!-- Dynamic News Items List -->
+              <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">خبروں کی فہرست:</h3>
+              <div id="newsItemsContainer" style="margin-bottom: 1.5rem;">
+                <!-- News inputs will be injected here via JS -->
+              </div>
+              
+              <button type="button" id="addNewsBtn" class="btn-submit" style="background-color: #28a745; margin-bottom: 2rem;">
+                <i class="fas fa-plus"></i> مزید خبر شامل کریں
+              </button>
+              
+              <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 2rem;">
+
+              <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">لائیو پریویو (Live Preview):</h3>
+              <div id="newsLivePreview" style="margin-bottom: 2rem; border-radius: 5px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <!-- Preview injected via JS -->
+              </div>
+
+              <button type="submit" class="btn-submit" id="saveNewsBtn"><i class="fas fa-save"></i> محفوظ کریں</button>
+            </form>
+            <div id="newsStatusMessage" class="status-msg"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Manage Footer Section -->
+      <section id="section-footer" class="admin-section" style="display: none;">
+        <div class="card">
+          <h2 class="card-title">فٹر کا انتظام (Footer Settings)</h2>
+          <div class="admin-form">
+            <form id="footerForm">
+              
+              <div class="form-group">
+                <label>ویب سائٹ کا تعارف (About Text):</label>
+                <textarea id="footerAbout" rows="4" placeholder="فٹر میں ویب سائٹ کا تعارف لکھیں..."></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>رابطہ ای میل (Email):</label>
+                  <input type="email" id="footerEmail" placeholder="info@example.com">
+                </div>
+                <div class="form-group">
+                  <label>رابطہ فون (Phone):</label>
+                  <input type="text" id="footerPhone" placeholder="+92 300 1234567" dir="ltr" style="text-align: left;">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>کاپی رائٹ ٹیکسٹ (Copyright):</label>
+                <input type="text" id="footerCopyright" placeholder="© 2026 معارف شیخ۔ جملہ حقوق محفوظ ہیں۔">
+              </div>
+
+              <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; font-size: 1.1rem;">سوشل میڈیا لنکس (Social Links)</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label><i class="fab fa-facebook" style="color:#1877f2;"></i> فیسبک (Facebook):</label>
+                  <input type="url" id="footerFacebook" placeholder="https://facebook.com/..." dir="ltr">
+                </div>
+                <div class="form-group">
+                  <label><i class="fab fa-youtube" style="color:#ff0000;"></i> یوٹیوب (YouTube):</label>
+                  <input type="url" id="footerYoutube" placeholder="https://youtube.com/..." dir="ltr">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label><i class="fab fa-whatsapp" style="color:#25d366;"></i> وٹس ایپ (WhatsApp):</label>
+                  <input type="url" id="footerWhatsapp" placeholder="https://wa.me/..." dir="ltr">
+                </div>
+                <div class="form-group">
+                  <label><i class="fab fa-twitter" style="color:#1da1f2;"></i> ٹوئٹر (Twitter):</label>
+                  <input type="url" id="footerTwitter" placeholder="https://twitter.com/..." dir="ltr">
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label><i class="fab fa-instagram" style="color:#e1306c;"></i> انسٹاگرام (Instagram):</label>
+                <input type="url" id="footerInstagram" placeholder="https://instagram.com/..." dir="ltr">
+              </div>
+              
+              <button type="submit" class="btn-submit" id="saveFooterBtn"><i class="fas fa-save"></i> فٹر محفوظ کریں</button>
+            </form>
+            <div id="footerStatusMessage" class="status-msg"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Manage Background Section -->
+      <section id="section-bg" class="admin-section" style="display: none;">
+        <div class="card">
+          <h2 class="card-title">ویب سائٹ کا پس منظر (Background Settings)</h2>
+          <div class="admin-form">
+            <form id="bgForm">
+              
+              <div class="form-group">
+                <label>پس منظر کی قسم منتخب کریں:</label>
+                <div class="radio-group" style="display: flex; gap: 2rem; margin-top: 0.5rem; margin-bottom: 1.5rem;">
+                  <label><input type="radio" name="bgTypeOption" value="color" checked> ایک رنگ (Solid Color)</label>
+                  <label><input type="radio" name="bgTypeOption" value="gradient"> گریڈینٹ (Gradient)</label>
+                  <label><input type="radio" name="bgTypeOption" value="image"> تصویر / وال پیپر (Image)</label>
+                </div>
+              </div>
+
+              <!-- Single Color Input -->
+              <div class="form-group" id="bgColorContainer">
+                <label>رنگ منتخب کریں:</label>
+                <input type="color" id="bgColorInput" value="#f5f7fa" style="width: 100px; height: 50px; cursor: pointer;">
+              </div>
+
+              <!-- Gradient Color Input -->
+              <div class="form-row" id="bgGradientContainer" style="display: none;">
+                <div class="form-group">
+                  <label>پہلا رنگ:</label>
+                  <input type="color" id="bgGrad1Input" value="#f5f7fa" style="width: 100%; height: 50px; cursor: pointer;">
+                </div>
+                <div class="form-group">
+                  <label>دوسرا رنگ:</label>
+                  <input type="color" id="bgGrad2Input" value="#c3cfe2" style="width: 100%; height: 50px; cursor: pointer;">
+                </div>
+              </div>
+
+              <!-- Image Input -->
+              <div class="form-group" id="bgImageContainer" style="display: none;">
+                <label>وال پیپر اپلوڈ کریں:</label>
+                <input type="file" id="bgImageFile" accept="image/png, image/jpeg, image/webp">
+                <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">نوٹ: تصویر خودبخود پوری سکرین پر ایڈجسٹ ہو جائے گی۔</p>
+                <div id="currentBgImage" style="margin-top: 1rem;"></div>
+              </div>
+              
+              <button type="submit" class="btn-submit" id="saveBgBtn"><i class="fas fa-save"></i> پس منظر محفوظ کریں</button>
+            </form>
+            <div id="bgStatusMessage" class="status-msg"></div>
+          </div>
+        </div>
+
+        <!-- Logo Management Card -->
+        <div class="card" style="margin-top: 2rem;">
+          <h2 class="card-title">ویب سائٹ کا لوگو (Logo Settings)</h2>
+          <div class="admin-form">
+            <form id="logoForm">
+              <div class="form-group">
+                <label>نیا لوگو اپلوڈ کریں:</label>
+                <input type="file" id="logoFile" accept="image/png, image/jpeg, image/webp, image/svg+xml">
+                <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">تجویز کردہ سائز (Recommended Size): <strong>200x60 پکسلز (Pixels)</strong>۔ ٹرانسپیرنٹ (Transparent) پس منظر والی PNG یا SVG تصویر بہتر رہے گی۔</p>
+                <div id="currentLogoPreview" style="margin-top: 1rem; background: #eee; padding: 10px; border-radius: 4px; display: inline-block;">
+                  <!-- Current logo will be injected here -->
+                </div>
+              </div>
+              <button type="submit" class="btn-submit" id="saveLogoBtn"><i class="fas fa-save"></i> لوگو محفوظ کریں</button>
+            </form>
+            <div id="logoStatusMessage" class="status-msg"></div>
+          </div>
+        </div>
+
+        <!-- New Theme Colors Management Card -->
+        <div class="card" style="margin-top: 2rem;">
+          <h2 class="card-title">ویب سائٹ کے رنگوں کا انتظام (Theme Colors)</h2>
+          <div class="admin-form">
+            <form id="themeColorsForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>بنیادی ٹیکسٹ رنگ (Ink):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorInk" value="#1e293b" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textInk" value="#1e293b" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>بیک گراؤنڈ رنگ (Parchment):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorParchment" value="#F8F9FA" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textParchment" value="#F8F9FA" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>ایکسنٹ 1 (Primary/Gold):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorGold" value="#10b981" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textGold" value="#10b981" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>ایکسنٹ 2 (Secondary/Teal):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorTeal" value="#0f766e" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textTeal" value="#0f766e" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>ٹیگز رنگ (Maroon):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorMaroon" value="#6366f1" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textMaroon" value="#6366f1" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>بارڈرز رنگ (Parchment-2):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorParchment2" value="#e2e8f0" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textParchment2" value="#e2e8f0" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+              </div>
+              <h3 style="margin-top: 1rem; margin-bottom: 0.5rem; font-size: 1.1rem;">مزید رنگ (Footer & Feedback)</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>فٹر بیک گراؤنڈ (Footer Bg):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorFooterBg" value="#1e293b" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textFooterBg" value="#1e293b" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>فٹر ٹیکسٹ (Footer Text):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorFooterText" value="#e2e8f0" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textFooterText" value="#e2e8f0" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>کاپی رائٹ پٹی (Footer Bottom):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorFooterBottom" value="#0f766e" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textFooterBottom" value="#0f766e" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>کاپی رائٹ لکھائی (Copyright Text):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorFooterBottomText" value="#ffffff" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textFooterBottomText" value="#ffffff" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>سوشل آئیکن بیک گراؤنڈ (Icon Bg):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorSocialIconBg" value="#0f766e" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textSocialIconBg" value="#0f766e" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>سوشل آئیکن رنگ (Icon Text):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorSocialIconText" value="#ffffff" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textSocialIconText" value="#ffffff" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>فیڈبیک بٹن (Feedback Bg):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorFeedbackBg" value="#10b981" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textFeedbackBg" value="#10b981" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>فیڈبیک ٹیکسٹ (Feedback Text):</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="color" id="colorFeedbackText" value="#ffffff" style="width:50px; height:40px; cursor:pointer; padding:0; border:none; border-radius:4px;">
+                    <input type="text" id="textFeedbackText" value="#ffffff" style="flex:1; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem;" placeholder="#HEX or RGB">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <!-- Empty for alignment -->
+                </div>
+              </div>
+              
+              <h3 style="margin-top: 2rem; margin-bottom: 1rem; font-size: 1.1rem;">لائیو پریویو (Live Preview):</h3>
+              <div id="themeLivePreview" style="margin-bottom: 2rem; padding: 2rem; border-radius: 12px; border: 1px solid #ccc; background-color: var(--parchment); color: var(--ink); transition: background-color 0.3s, color 0.3s;">
+                 <!-- Mock UI -->
+                 <div style="background: rgba(255,255,255,0.7); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--parchment-2); box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: border-color 0.3s;">
+                    <h4 style="color: var(--teal); margin-bottom: 0.5rem; font-size: 1.3rem; transition: color 0.3s;">لائیو پریویو ہیڈنگ</h4>
+                    <p style="margin-bottom: 1rem; font-size: 1rem;">یہ ایک فرضی ٹیکسٹ ہے تاکہ آپ دیکھ سکیں کہ مختلف جگہوں پر نیا رنگ کیسا لگے گا۔</p>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                       <span style="background: var(--maroon); color: #fff; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; transition: background-color 0.3s;">یہ ایک ٹیگ ہے</span>
+                       <button type="button" style="background: var(--gold); color: #fff; border: none; padding: 10px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;">بٹن کا نمونہ</button>
+                    </div>
+                 </div>
+              </div>
+
+              <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn-submit" id="saveColorsBtn" style="flex: 2;"><i class="fas fa-save"></i> رنگ محفوظ کریں</button>
+                <button type="button" class="btn-submit" id="resetColorsBtn" style="flex: 1; background-color: #ef4444;"><i class="fas fa-undo"></i> ڈیفالٹ پر لائیں</button>
+              </div>
+            </form>
+            <div id="themeStatusMessage" class="status-msg"></div>
+          </div>
+        </div>
+      </section>
+      <!-- Security Section -->
+      <section id="section-security" class="admin-section" style="display: none;">
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+          <h2 class="card-title">ایڈمن سیکیورٹی سیٹنگز</h2>
+          <p style="margin-bottom: 1.5rem; color: #555;">یہاں سے آپ اپنا ایڈمن پاس ورڈ تبدیل کر سکتے ہیں۔ نیا پاس ورڈ کم از کم 4 حروف کا ہونا چاہیے۔</p>
+          <form id="securityForm" class="admin-form">
+            <div class="form-group">
+              <label>پرانا پاس ورڈ:</label>
+              <div class="password-wrapper">
+                <input type="password" id="oldPassword" required placeholder="پرانا پاس ورڈ لکھیں..." dir="ltr" style="text-align: left; font-family: sans-serif;">
+                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('oldPassword', this)"></i>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>نیا پاس ورڈ:</label>
+              <div class="password-wrapper">
+                <input type="password" id="newPassword" required placeholder="نیا پاس ورڈ لکھیں..." dir="ltr" style="text-align: left; font-family: sans-serif;">
+                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('newPassword', this)"></i>
+              </div>
+            </div>
+            <button type="submit" class="btn-submit" id="saveSecurityBtn"><i class="fas fa-lock"></i> پاس ورڈ تبدیل کریں</button>
+          </form>
+          <div id="securityStatusMessage" class="status-msg"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+  
+  <!-- Edit Section Modal -->
+  <div id="editSectionModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div class="modal-content" style="background: var(--parchment); padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+      <h3 id="editSectionTitle" style="margin-top: 0; color: var(--gold); border-bottom: 2px solid var(--parchment-2); padding-bottom: 0.5rem;">سیکشن میں ترمیم کریں</h3>
+      <div class="admin-form" style="margin-top: 1rem;">
+        <input type="hidden" id="editSectionCatId">
+        <input type="hidden" id="editSectionId">
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">سیکشن کا نام:</label>
+          <input type="text" id="editSectionNameInput" style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 6px;" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">فولڈر کا رنگ:</label>
+          <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--parchment-2); padding: 0.8rem; border-radius: 6px; border: 1px solid #ccc;">
+            <input type="color" id="editSectionColorInput" value="#fbbf24" style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer; border-radius: 4px;">
+            <span style="font-size: 0.85rem; color: #555;" id="editSectionSeriesInfo"></span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+          <button class="btn-submit" id="saveEditSectionBtn" style="flex: 1; padding: 0.8rem;"><i class="fas fa-save"></i> محفوظ کریں</button>
+          <button class="btn-cancel" onclick="document.getElementById('editSectionModal').style.display='none'" style="flex: 1; padding: 0.8rem; background: #e74c3c; color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fas fa-times"></i> منسوخ کریں</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
