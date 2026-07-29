@@ -185,6 +185,7 @@ function initApp() {
   let currentHomeArticleIndex = 0;
 
   function renderHome() {
+    window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(homeTemplate.content.cloneNode(true));
     attachHomeEvents();
@@ -390,6 +391,7 @@ function initApp() {
   }
 
   function renderAbout() {
+    window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(aboutTemplate.content.cloneNode(true));
     attachGlobalEvents();
@@ -399,6 +401,7 @@ function initApp() {
   }
 
   function renderContact() {
+    window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(contactTemplate.content.cloneNode(true));
     attachGlobalEvents();
@@ -418,6 +421,7 @@ function initApp() {
   }
 
   function renderCategory(categoryId) {
+    window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(categoryTemplate.content.cloneNode(true));
     
@@ -509,6 +513,7 @@ function initApp() {
   }
 
   function renderSection(categoryId, sectionId) {
+    window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(sectionTemplate.content.cloneNode(true));
     
@@ -762,6 +767,7 @@ function initApp() {
   }
 
   window.renderSingleItem = function(categoryId, sectionId, itemId) {
+    window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(singleItemTemplate.content.cloneNode(true));
     
@@ -861,6 +867,7 @@ function initApp() {
   }
 
   window.renderHomeSingleItem = function(index = 0) {
+    window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(singleItemTemplate.content.cloneNode(true));
     
