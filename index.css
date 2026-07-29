@@ -372,8 +372,8 @@ ul {
 }
 
 .header-container {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: 1rem 2rem;
   max-width: 1200px;
@@ -386,19 +386,16 @@ ul {
 }
 
 .header-right {
-  flex: 1;
   justify-content: flex-start;
+  gap: 20px;
 }
 
 .header-middle {
-  flex: 2;
   justify-content: center;
 }
 
 .header-left {
-  flex: 1;
   justify-content: flex-end;
-  gap: 1rem;
 }
 
 .logo-link {
@@ -546,6 +543,7 @@ ul {
   }
   
   .header-container {
+    display: flex;
     flex-wrap: wrap;
     padding-top: 1rem;
     padding-bottom: 1rem;

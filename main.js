@@ -1149,14 +1149,12 @@ function initApp() {
 
   function openInlineSearch() {
     if (headerSearchContainer) {
-      headerSearchContainer.classList.add('expanded');
       setTimeout(() => inlineSearchInput && inlineSearchInput.focus(), 100);
     }
   }
 
   function closeInlineSearch() {
     if (headerSearchContainer) {
-      headerSearchContainer.classList.remove('expanded');
       if (inlineSearchInput) inlineSearchInput.value = '';
       if (inlineSearchResults) inlineSearchResults.style.display = 'none';
     }
@@ -1249,16 +1247,7 @@ function initApp() {
   if (inlineSearchBtn && headerSearchContainer) {
     inlineSearchBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      if (headerSearchContainer.classList.contains('expanded')) {
-        // If already expanded and there is text, maybe search or close
-        if (inlineSearchInput.value.trim() === '') {
-          closeInlineSearch();
-        } else {
-          performInlineSearch();
-        }
-      } else {
-        openInlineSearch();
-      }
+      performInlineSearch();
     });
 
     // Close when clicking outside
