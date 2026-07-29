@@ -5,6 +5,13 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Islamic Tughray';
+  src: url('/fonts/IslamicTughray.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --ink: #1e293b;
   --parchment: #F8F9FA;
@@ -1038,6 +1045,10 @@ ul {
   
   .content-body, .content-body * {
     font-family: var(--font-family) !important;
+  }
+  
+  .content-body [style*="Islamic"], .content-body [style*="Islamic Tughray"] {
+    font-family: 'Islamic Tughray' !important;
   }
   
   .contact-card {
