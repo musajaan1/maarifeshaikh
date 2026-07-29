@@ -11,16 +11,16 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 app.use(cors());
 app.use(express.json({ limit: '10mb' })); 
 
-// Setup Multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, 'uploads'));
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
-  }
+// Initialize Cloudinary
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({ 
+  cloud_name: 'tmyknxzc', 
+  api_key: '273949662681685', 
+  api_secret: 'LH62KWbXfjQdr3OsFHYIDk-xVLs' 
 });
+
+// Setup Multer for file uploads (Memory Storage for Vercel/Cloudinary)
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Auth config
@@ -174,28 +174,74 @@ app.post('/api/upload', requireAuth, upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
-  // Return the path relative to the root URL
-  res.json({ url: '/uploads/' + req.file.filename });
+
+  const ext = path.extname(req.file.originalname).toLowerCase();
+  let resourceType = 'auto';
+  if (ext === '.pdf') {
+    resourceType = 'image';
+  } else if (ext === '.mp3' || ext === '.wav') {
+    resourceType = 'video';
+  }
+
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+  const baseName = path.basename(req.file.originalname, ext);
+  const filename = uniqueSuffix + '-' + baseName;
+
+  const uploadStream = cloudinary.uploader.upload_stream(
+    { 
+      resource_type: resourceType,
+      folder: 'maarifeshaikh_uploads',
+      public_id: filename // Set explicit public_id to preserve the custom name
+    },
+    (error, result) => {
+      if (error) {
+        console.error('Cloudinary upload error:', error);
+        return res.status(500).json({ error: 'Failed to upload to cloud' });
+      }
+      res.json({ url: result.secure_url });
+    }
+  );
+
+  uploadStream.end(req.file.buffer);
 });
 
 // API to delete files
 app.post('/api/delete-file', (req, res) => {
   const { url } = req.body;
-  if (!url || !url.startsWith('/uploads/')) {
+  if (!url) {
     return res.status(400).json({ error: 'Invalid file url' });
   }
   
-  const filename = url.replace('/uploads/', '');
-  const filepath = path.join(__dirname, 'uploads', filename);
-  
-  fs.unlink(filepath, (err) => {
-    if (err) {
-      console.error(err);
-      // It might already be deleted, so we just return success anyway or a specific message
-      return res.status(500).json({ error: 'Failed to delete file' });
+  if (url.includes('cloudinary.com')) {
+    try {
+      let publicId = url.split('/upload/')[1].split('/').slice(1).join('/'); 
+      const lastDot = publicId.lastIndexOf('.');
+      if (lastDot !== -1) {
+        publicId = publicId.substring(0, lastDot);
+      }
+      publicId = decodeURI(publicId);
+      
+      let resourceType = 'image';
+      if (url.includes('/video/upload/')) resourceType = 'video';
+      else if (url.includes('/raw/upload/')) resourceType = 'raw';
+      
+      cloudinary.uploader.destroy(publicId, { resource_type: resourceType }, (error, result) => {
+        if (error) console.error('Cloudinary delete error:', error);
+        res.json({ success: true, message: 'File deleted successfully' });
+      });
+    } catch(e) {
+      console.error(e);
+      res.json({ success: true, message: 'File deleted (simulated)' });
     }
-    res.json({ success: true, message: 'File deleted successfully' });
-  });
+  } else if (url.startsWith('/uploads/')) {
+    const filename = url.replace('/uploads/', '');
+    const filepath = path.join(__dirname, 'uploads', filename);
+    fs.unlink(filepath, (err) => {
+      res.json({ success: true, message: 'File deleted successfully' });
+    });
+  } else {
+    res.json({ success: true });
+  }
 });
 
 
