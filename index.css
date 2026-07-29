@@ -1239,3 +1239,5 @@ ul {
   15% { left: 150%; }
   100% { left: 150%; }
 }
+.list-item-meta span, .article-meta span, .hero-meta span, #singleMeta span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.list-item-meta i, .article-meta i, .hero-meta i, #singleMeta i { margin: 0 !important; }
