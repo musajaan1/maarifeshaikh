@@ -68,13 +68,6 @@
             <i class="fas fa-book-open"></i>
           </div>
         </a>
-        <div class="header-search-container" id="headerSearchContainer" style="position: relative; display: flex; align-items: center; border-radius: 20px; transition: all 0.3s ease; height: 38px;">
-          <button id="inlineSearchBtn" title="تلاش کریں" style="background: transparent; border: none; color: var(--ink); min-width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; outline: none;">
-            <i class="fas fa-search"></i>
-          </button>
-          <input type="text" id="inlineSearchInput" placeholder="تلاش کریں..." style="background: transparent; border: none; outline: none; font-family: inherit; font-size: 0.95rem; transition: all 0.3s ease; z-index: 1;">
-          <div id="inlineSearchResults" style="position: absolute; right: 0; top: 45px; width: 350px; background: white; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); display: none; z-index: 20; max-height: 400px; overflow-y: auto; text-align: right; color: var(--ink);"></div>
-        </div>
       </div>
       
       <div class="header-middle" id="navMenu">
@@ -83,12 +76,18 @@
             <li><a href="/">ہوم پیج</a></li>
             <li><a href="/about">ہمارے بارے میں</a></li>
             <li><a href="/contact">ہم سے رابطہ کریں</a></li>
-            <li class="nav-feedback"><a href="#" id="feedbackHeaderBtn"><i class="fas fa-comment-dots"></i> رائے دیں</a></li>
           </ul>
         </nav>
+        <div class="header-search-container" id="headerSearchContainer" style="position: relative; display: flex; align-items: center; border-radius: 20px; transition: all 0.3s ease; height: 38px; margin-right: 20px;">
+          <button id="inlineSearchBtn" title="تلاش کریں" style="background: transparent; border: none; color: var(--ink); min-width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; outline: none;">
+            <i class="fas fa-search"></i>
+          </button>
+          <input type="text" id="inlineSearchInput" placeholder="تلاش کریں..." style="background: transparent; border: none; outline: none; font-family: inherit; font-size: 0.95rem; transition: all 0.3s ease; z-index: 1;">
+          <div id="inlineSearchResults" style="position: absolute; right: 0; top: 45px; width: 350px; background: white; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); display: none; z-index: 20; max-height: 400px; overflow-y: auto; text-align: right; color: var(--ink);"></div>
+        </div>
       </div>
-
       <div class="header-left">
+        <a href="#" id="feedbackHeaderBtn" class="header-feedback-btn"><i class="fas fa-comment-dots"></i> رائے دیں</a>
         <button class="menu-toggle" aria-label="مینو" id="menuToggle">
           <i class="fas fa-bars"></i>
         </button>

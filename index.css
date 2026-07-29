@@ -303,6 +303,21 @@ main.main-content {
   font-size: 0.9rem;
   font-weight: bold;
 }
+.header-feedback-btn {
+  background-color: var(--teal);
+  color: #fff !important;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.header-feedback-btn:hover {
+  background-color: var(--gold);
+  color: var(--ink) !important;
+}
 .hero-title {
   color: var(--ink);
   font-size: 2.2rem;
@@ -396,6 +411,7 @@ ul {
 
 .header-left {
   justify-content: flex-end;
+  gap: 15px;
 }
 
 .logo-link {
