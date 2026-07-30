@@ -470,7 +470,7 @@ function initApp() {
       groupedSections[series].forEach(sec => {
         const card = document.createElement("div");
         card.className = "section-card";
-        card.innerHTML = `<i class="fas fa-folder" style="color: ${folderColor};"></i> <span>${sec.displayTitle}</span>`;
+        card.innerHTML = `<i class="fas fa-folder" style="color: ${folderColor};"></i> <span title="${sec.displayTitle}">${sec.displayTitle}</span>`;
         card.dataset.sectionId = sec.id;
         card.addEventListener("click", () => renderSection(categoryId, sec.id));
         grid.appendChild(card);
@@ -496,7 +496,7 @@ function initApp() {
 
         const card = document.createElement("div");
         card.className = "section-card";
-        card.innerHTML = `<i class="fas fa-folder" style="color: ${folderColor};"></i> <span>${sec.displayTitle}</span>`;
+        card.innerHTML = `<i class="fas fa-folder" style="color: ${folderColor};"></i> <span title="${sec.displayTitle}">${sec.displayTitle}</span>`;
         card.dataset.sectionId = sec.id;
         card.addEventListener("click", () => renderSection(categoryId, sec.id));
         grid.appendChild(card);
