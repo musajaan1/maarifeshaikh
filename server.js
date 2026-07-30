@@ -14,6 +14,9 @@ try {
     const match = process.env.FIREBASE_SERVICE_ACCOUNT.match(/\{[\s\S]*\}/);
     if (match) {
       serviceAccount = JSON.parse(match[0]);
+      if (serviceAccount.private_key) {
+        serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+      }
     } else {
       throw new Error("No valid JSON found in FIREBASE_SERVICE_ACCOUNT");
     }
