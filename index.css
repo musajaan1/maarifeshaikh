@@ -1069,7 +1069,7 @@ ul {
     margin-top: 1rem;
   }
   
-  .content-body, .content-body * {
+  .content-body, .content-body *:not(i[class*="fa-"]) {
     font-family: var(--font-family) !important;
   }
   
