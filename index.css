@@ -1,8 +1,9 @@
 @font-face {
   font-family: 'FaizNastaliq';
-  src: url('/fonts/FaizNastaliq.ttf') format('truetype');
+  src: local('Faiz Lahori Nastaleeq'), local('FaizNastaliq'), url('/fonts/FaizNastaliq.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -30,7 +31,7 @@
   --feedback-bg: #10b981;
   --feedback-text: #ffffff;
   
-  --font-family: 'FaizNastaliq', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family: 'Faiz Lahori Nastaleeq', 'FaizNastaliq', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 * {
