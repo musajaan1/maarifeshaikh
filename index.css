@@ -943,6 +943,22 @@ ul {
 .share-btn i {
   font-size: 1.5rem;
 }
+.share-btn i.fa-brands, .share-btn i.fab {
+  font-family: "Font Awesome 6 Brands", "FontAwesome" !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  font-variant: normal !important;
+  text-rendering: auto !important;
+  line-height: 1 !important;
+}
+.share-btn i.fa-solid, .share-btn i.fas {
+  font-family: "Font Awesome 6 Free", "FontAwesome" !important;
+  font-style: normal !important;
+  font-weight: 900 !important;
+  font-variant: normal !important;
+  text-rendering: auto !important;
+  line-height: 1 !important;
+}
 .share-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(0,0,0,0.15);

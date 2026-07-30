@@ -280,16 +280,16 @@ function initApp() {
       const homeArt = homeArticles[currentHomeArticleIndex];
       document.getElementById("homeArticleTitle").textContent = homeArt.title;
       document.getElementById("homeArticleExcerpt").textContent = homeArt.excerpt;
-      document.getElementById("homeArticleAuthor").innerHTML = homeArt.author ? `<i class="fas fa-pen"></i> ${homeArt.author}` : '';
-      document.getElementById("homeArticleKalam").innerHTML = homeArt.kalam ? `<i class="fas fa-quote-right"></i> کلام: ${homeArt.kalam}` : '';
-      document.getElementById("homeArticleAwaz").innerHTML = homeArt.awaz ? `<i class="fas fa-microphone"></i> آواز: ${homeArt.awaz}` : '';
+      document.getElementById("homeArticleAuthor").innerHTML = homeArt.author ? `<i class="fa-solid fa-pen"></i> ${homeArt.author}` : '';
+      document.getElementById("homeArticleKalam").innerHTML = homeArt.kalam ? `<i class="fa-solid fa-quote-right"></i> کلام: ${homeArt.kalam}` : '';
+      document.getElementById("homeArticleAwaz").innerHTML = homeArt.awaz ? `<i class="fa-solid fa-microphone"></i> آواز: ${homeArt.awaz}` : '';
       document.getElementById("homeArticleDate").innerHTML = homeArt.date ? `<i class="far fa-calendar-alt"></i> ${homeArt.date}` : '';
       
       const imgContainer = document.getElementById("homeArticleImage");
       if (homeArt.mediaUrl) {
         imgContainer.innerHTML = `<img src="${homeArt.mediaUrl}" alt="${homeArt.title}" style="width:100%; height:100%; object-fit:cover;">`;
       } else {
-        imgContainer.innerHTML = `<i class="fas fa-book-open" style="font-size: 3rem; color: var(--gold);"></i>`;
+        imgContainer.innerHTML = `<i class="fa-solid fa-book-open" style="font-size: 3rem; color: var(--gold);"></i>`;
       }
 
       const readMoreBtn = document.getElementById("homeArticleReadMore");
@@ -352,7 +352,7 @@ function initApp() {
         if (topArticles.length > 0) {
           let tHtml = `
             <div class="trending-section" style="margin-top: 4rem;">
-              <h2 class="section-title"><i class="fas fa-fire" style="color: #ef4444;"></i> مقبول ترین مضامین</h2>
+              <h2 class="section-title"><i class="fa-solid fa-fire" style="color: #ef4444;"></i> مقبول ترین مضامین</h2>
               <div class="trending-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
           `;
           topArticles.forEach(ta => {
@@ -371,7 +371,7 @@ function initApp() {
               <div class="list-item" style="cursor: pointer;" onclick="window.renderSingleItem('${catId}', '${secId}', '${ta.id}')">
                 <div class="list-item-title">${ta.title}</div>
                 <div class="list-item-meta">
-                  <span><i class="fas fa-eye"></i> ${ta.views || 0} ویوز</span>
+                  <span><i class="fa-solid fa-eye"></i> ${ta.views || 0} ویوز</span>
                   ${ta.date ? `<span><i class="far fa-calendar-alt"></i> ${ta.date}</span>` : ''}
                 </div>
               </div>
@@ -470,7 +470,7 @@ function initApp() {
       groupedSections[series].forEach(sec => {
         const card = document.createElement("div");
         card.className = "section-card";
-        card.innerHTML = `<i class="fas fa-folder" style="color: ${folderColor};"></i> <span title="${sec.displayTitle}">${sec.displayTitle}</span>`;
+        card.innerHTML = `<i class="fa-solid fa-folder" style="color: ${folderColor};"></i> <span title="${sec.displayTitle}">${sec.displayTitle}</span>`;
         card.dataset.sectionId = sec.id;
         card.addEventListener("click", () => renderSection(categoryId, sec.id));
         grid.appendChild(card);
@@ -496,7 +496,7 @@ function initApp() {
 
         const card = document.createElement("div");
         card.className = "section-card";
-        card.innerHTML = `<i class="fas fa-folder" style="color: ${folderColor};"></i> <span title="${sec.displayTitle}">${sec.displayTitle}</span>`;
+        card.innerHTML = `<i class="fa-solid fa-folder" style="color: ${folderColor};"></i> <span title="${sec.displayTitle}">${sec.displayTitle}</span>`;
         card.dataset.sectionId = sec.id;
         card.addEventListener("click", () => renderSection(categoryId, sec.id));
         grid.appendChild(card);
@@ -559,12 +559,12 @@ function initApp() {
             <div class="list-item-title">${item.title}</div>
             <div class="list-item-excerpt">${item.excerpt}</div>
             <div class="list-item-meta">
-              ${item.author ? `<span><i class="fas fa-pen"></i> ${item.author}</span>` : ''}
-              ${item.kalam ? `<span><i class="fas fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
-              ${item.awaz ? `<span><i class="fas fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
+              ${item.author ? `<span><i class="fa-solid fa-pen"></i> ${item.author}</span>` : ''}
+              ${item.kalam ? `<span><i class="fa-solid fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
+              ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
               ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
             </div>
-            <button class="btn-read-more" style="margin-top: auto; align-self: flex-end; border-radius: 50px; padding: 0.5rem 1.5rem;" onclick="window.renderSingleItem('${categoryId}', '${sectionId}', '${item.id}')">مزید پڑھیں <i class="fas fa-arrow-left"></i></button>
+            <button class="btn-read-more" style="margin-top: auto; align-self: flex-end; border-radius: 50px; padding: 0.5rem 1.5rem;" onclick="window.renderSingleItem('${categoryId}', '${sectionId}', '${item.id}')">مزید پڑھیں <i class="fa-solid fa-arrow-left"></i></button>
           `;
         } else if (catType === 'post') {
           contentHtml = `
@@ -579,20 +579,20 @@ function initApp() {
             <div class="list-item-title">${item.title}</div>
             <div class="list-item-excerpt">${item.excerpt}</div>
             <div class="list-item-meta">
-              ${item.author ? `<span><i class="fas fa-pen"></i> ${item.author}</span>` : ''}
-              ${item.kalam ? `<span><i class="fas fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
-              ${item.awaz ? `<span><i class="fas fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
+              ${item.author ? `<span><i class="fa-solid fa-pen"></i> ${item.author}</span>` : ''}
+              ${item.kalam ? `<span><i class="fa-solid fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
+              ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
               ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
             </div>
-            <button class="btn-read-more" style="margin-top: auto; align-self: flex-end; border-radius: 50px; padding: 0.5rem 1.5rem;" onclick="window.renderSingleItem('${categoryId}', '${sectionId}', '${item.id}')">مزید پڑھیں <i class="fas fa-arrow-left"></i></button>
+            <button class="btn-read-more" style="margin-top: auto; align-self: flex-end; border-radius: 50px; padding: 0.5rem 1.5rem;" onclick="window.renderSingleItem('${categoryId}', '${sectionId}', '${item.id}')">مزید پڑھیں <i class="fa-solid fa-arrow-left"></i></button>
           `;
         } else if (catType === 'audio') {
           contentHtml = `
             <div class="list-item-title">${item.title}</div>
             <div class="list-item-meta" style="margin-bottom: 1rem;">
-              ${item.author ? `<span><i class="fas fa-pen"></i> ${item.author}</span>` : ''}
-              ${item.kalam ? `<span><i class="fas fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
-              ${item.awaz ? `<span><i class="fas fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
+              ${item.author ? `<span><i class="fa-solid fa-pen"></i> ${item.author}</span>` : ''}
+              ${item.kalam ? `<span><i class="fa-solid fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
+              ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
               ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
             </div>
             ${item.mediaUrl ? `<audio controls style="width: 100%;" src="${item.mediaUrl}"></audio>` : ''}
@@ -606,7 +606,7 @@ function initApp() {
       if (itemsToShow < items.length) {
         const loadMoreBtn = document.createElement('button');
         loadMoreBtn.className = 'btn-load-more';
-        loadMoreBtn.innerHTML = 'مزید دیکھیں <i class="fas fa-chevron-down"></i>';
+        loadMoreBtn.innerHTML = 'مزید دیکھیں <i class="fa-solid fa-chevron-down"></i>';
         loadMoreBtn.onclick = () => {
           itemsToShow += 10;
           renderList();
@@ -789,20 +789,20 @@ function initApp() {
     
     const metaDiv = document.getElementById("singleMeta");
     metaDiv.innerHTML = `
-      ${item.author ? `<span><i class="fas fa-pen"></i> ${item.author}</span>` : ''}
-      ${item.kalam ? `<span><i class="fas fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
-      ${item.awaz ? `<span><i class="fas fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
+      ${item.author ? `<span><i class="fa-solid fa-pen"></i> ${item.author}</span>` : ''}
+      ${item.kalam ? `<span><i class="fa-solid fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
+      ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
       ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
-      <span><i class="fas fa-eye"></i> ${item.views || 0} ویوز</span>
+      <span><i class="fa-solid fa-eye"></i> ${item.views || 0} ویوز</span>
     `;
     
     const url = window.location.href;
     const shareHtml = `
       <div class="share-buttons">
-        <button onclick="navigator.clipboard.writeText('${url}'); alert('لنک کاپی ہو گیا!');" class="share-btn share-copy" title="لنک کاپی کریں"><i class="fas fa-link"></i></button>
-        <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}" target="_blank" class="share-btn share-tw" title="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" class="share-btn share-fb" title="فیس بک"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(item.title + ' - ' + url)}" target="_blank" class="share-btn share-wa" title="واٹس ایپ"><i class="fab fa-whatsapp"></i></a>
+        <button onclick="navigator.clipboard.writeText('${url}'); alert('لنک کاپی ہو گیا!');" class="share-btn share-copy" title="لنک کاپی کریں"><i class="fa-solid fa-link"></i></button>
+        <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}" target="_blank" class="share-btn share-tw" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" class="share-btn share-fb" title="فیس بک"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(item.title + ' - ' + url)}" target="_blank" class="share-btn share-wa" title="واٹس ایپ"><i class="fa-brands fa-whatsapp"></i></a>
       </div>
     `;
     
@@ -840,7 +840,7 @@ function initApp() {
          <div class="pdf-container" style="margin-top: 2rem; margin-bottom: 2rem; background: var(--parchment-2); padding: 1rem; border-radius: 12px; border: 1px solid var(--gold);">
            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem; flex-wrap: wrap; gap:10px;">
              <h3 style="margin:0; color:var(--ink);">آنلائن مطالعہ کریں:</h3>
-             <a href="${item.mediaUrl}" target="_blank" class="btn-read-more" style="margin:0;"><i class="fas fa-download"></i> کتاب ڈاؤن لوڈ کریں</a>
+             <a href="${item.mediaUrl}" target="_blank" class="btn-read-more" style="margin:0;"><i class="fa-solid fa-download"></i> کتاب ڈاؤن لوڈ کریں</a>
            </div>
            <iframe src="${embedUrl}" width="100%" height="800px" style="border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white;"></iframe>
          </div>
@@ -887,20 +887,20 @@ function initApp() {
     
     const metaDiv = document.getElementById("singleMeta");
     metaDiv.innerHTML = `
-      ${item.author ? `<span><i class="fas fa-pen"></i> ${item.author}</span>` : ''}
-      ${item.kalam ? `<span><i class="fas fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
-      ${item.awaz ? `<span><i class="fas fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
+      ${item.author ? `<span><i class="fa-solid fa-pen"></i> ${item.author}</span>` : ''}
+      ${item.kalam ? `<span><i class="fa-solid fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
+      ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
       ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
-      <span><i class="fas fa-eye"></i> ${item.views || 0} ویوز</span>
+      <span><i class="fa-solid fa-eye"></i> ${item.views || 0} ویوز</span>
     `;
     
     const url = window.location.href;
     const shareHtml = `
       <div class="share-buttons">
-        <button onclick="navigator.clipboard.writeText('${url}'); alert('لنک کاپی ہو گیا!');" class="share-btn share-copy" title="لنک کاپی کریں"><i class="fas fa-link"></i></button>
-        <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}" target="_blank" class="share-btn share-tw" title="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" class="share-btn share-fb" title="فیس بک"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(item.title + ' - ' + url)}" target="_blank" class="share-btn share-wa" title="واٹس ایپ"><i class="fab fa-whatsapp"></i></a>
+        <button onclick="navigator.clipboard.writeText('${url}'); alert('لنک کاپی ہو گیا!');" class="share-btn share-copy" title="لنک کاپی کریں"><i class="fa-solid fa-link"></i></button>
+        <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}" target="_blank" class="share-btn share-tw" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" class="share-btn share-fb" title="فیس بک"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(item.title + ' - ' + url)}" target="_blank" class="share-btn share-wa" title="واٹس ایپ"><i class="fa-brands fa-whatsapp"></i></a>
       </div>
     `;
 
@@ -1233,7 +1233,7 @@ function initApp() {
         html += `
           <div class="inline-result-item">
             <a href="#" onclick="${clickAction}">
-              <i class="fas fa-file-alt" style="margin-left: 5px; font-size: 0.9em; color: var(--gold);"></i> ${highlightTitle}
+              <i class="fa-solid fa-file-alt" style="margin-left: 5px; font-size: 0.9em; color: var(--gold);"></i> ${highlightTitle}
             </a>
             <div style="font-size: 0.85rem; color: #666; margin-top: 5px;">
               یہ الفاظ اس مضمون میں <strong>${res.count} مرتبہ</strong> موجود ہیں
