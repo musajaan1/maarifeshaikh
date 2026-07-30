@@ -31,6 +31,9 @@ try {
 } catch (e) {
   console.error("Firebase init error", e);
   dbInitError = e.message || String(e);
+  if (serviceAccount && serviceAccount.private_key) {
+      dbInitError += " PK_START: " + serviceAccount.private_key.substring(0, 35) + " PK_NEWLINES: " + serviceAccount.private_key.includes('\n');
+  }
 }
 
 const app = express();
