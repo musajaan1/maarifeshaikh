@@ -1,6 +1,7 @@
 let siteData = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById('appRoot').innerHTML = '<div class="loader-container"><div class="spinner"></div><p style="margin-top: 15px; color: var(--teal); font-weight: 500;">ڈیٹا لوڈ ہو رہا ہے، براہ کرم انتظار کریں...</p></div>';
   fetch('/api/data')
     .then(res => res.json())
     .then(data => {
