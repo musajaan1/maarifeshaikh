@@ -1085,7 +1085,7 @@ ul {
     margin-top: 1rem;
   }
   
-  .content-body, .content-body *:not(i[class*="fa-"]) {
+  .content-body, .content-body * {
     font-family: var(--font-family) !important;
   }
   
