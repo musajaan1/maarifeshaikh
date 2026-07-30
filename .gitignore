@@ -1,0 +1,11 @@
+node_modules/
+firebase-service-account.json
+.env
+data.json
+uploads/
+admin-config.json
+*.log
+
+migrate*.js
+upload-to-cloudinary.js
+test-*.js
