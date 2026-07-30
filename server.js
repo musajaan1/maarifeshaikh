@@ -1,12 +1,25 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 
+// Firebase initialization
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
+let db;
+try {
+  const serviceAccount = require('./firebase-service-account.json');
+  initializeApp({
+    credential: cert(serviceAccount)
+  });
+  db = getFirestore();
+  console.log("Firebase initialized");
+} catch (e) {
+  console.error("Firebase init error", e);
+}
+
 const app = express();
 const PORT = process.env.PORT || 8080;
-const DATA_FILE = path.join(__dirname, 'data.json');
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' })); 
@@ -19,22 +32,20 @@ cloudinary.config({
   api_secret: 'LH62KWbXfjQdr3OsFHYIDk-xVLs' 
 });
 
-// Setup Multer for file uploads (Memory Storage for Vercel/Cloudinary)
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Auth config
-const CONFIG_FILE = path.join(__dirname, 'admin-config.json');
 const COOKIE_NAME = 'admin_token';
 const SECRET_TOKEN = 'secure_admin_session'; 
 
-function getAdminPassword() {
+async function getAdminPassword() {
   try {
-    if (fs.existsSync(CONFIG_FILE)) {
-      const config = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
-      return config.password || 'admin';
+    const doc = await db.collection('config').doc('admin').get();
+    if (doc.exists) {
+      return doc.data().password || 'admin';
     } else {
-      fs.writeFileSync(CONFIG_FILE, JSON.stringify({ password: 'admin' }));
+      await db.collection('config').doc('admin').set({ password: 'admin' });
       return 'admin';
     }
   } catch (err) {
@@ -62,13 +73,13 @@ function requireAuth(req, res, next) {
   }
 }
 
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
   const password = (req.body.password || '').trim();
-  const actualPassword = getAdminPassword().trim();
+  const actualPassword = (await getAdminPassword()).trim();
   console.log(`Login attempt: provided="${password}", actual="${actualPassword}"`);
   
   if (password === actualPassword) {
-    res.cookie(COOKIE_NAME, SECRET_TOKEN, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false }); // false so JS can delete it easily on logout, though true is safer. Let's use false so the frontend can check it if needed, or stick to backend validation.
+    res.cookie(COOKIE_NAME, SECRET_TOKEN, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false }); 
     res.json({ success: true });
   } else {
     res.status(401).json({ success: false, error: 'Invalid password' });
@@ -80,11 +91,12 @@ app.post('/api/logout', (req, res) => {
   res.json({ success: true });
 });
 
-app.post('/api/change-password', requireAuth, (req, res) => {
+app.post('/api/change-password', requireAuth, async (req, res) => {
   const oldPassword = (req.body.oldPassword || '').trim();
   const newPassword = (req.body.newPassword || '').trim();
+  const actualPassword = (await getAdminPassword()).trim();
   
-  if (oldPassword !== getAdminPassword().trim()) {
+  if (oldPassword !== actualPassword) {
     return res.status(401).json({ success: false, error: 'پرانا پاس ورڈ غلط ہے۔' });
   }
   
@@ -93,7 +105,7 @@ app.post('/api/change-password', requireAuth, (req, res) => {
   }
   
   try {
-    fs.writeFileSync(CONFIG_FILE, JSON.stringify({ password: newPassword }));
+    await db.collection('config').doc('admin').set({ password: newPassword });
     res.json({ success: true, message: 'پاس ورڈ کامیابی سے تبدیل ہو گیا۔' });
   } catch (err) {
     console.error(err);
@@ -115,58 +127,69 @@ app.use('/admin', (req, res, next) => {
 
 // Serve static files (frontend)
 app.use(express.static(__dirname));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API to GET data
-app.get('/api/data', (req, res) => {
-  fs.readFile(DATA_FILE, 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Failed to read data' });
+app.get('/api/data', async (req, res) => {
+  try {
+    const doc = await db.collection('siteData').doc('main').get();
+    if (doc.exists) {
+      res.json(doc.data());
+    } else {
+      res.json({}); 
     }
-    res.json(JSON.parse(data));
-  });
+  } catch(err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to read data' });
+  }
 });
 
 // API to POST (save) data
-app.post('/api/data', requireAuth, (req, res) => {
+app.post('/api/data', requireAuth, async (req, res) => {
   const newData = req.body;
-  fs.writeFile(DATA_FILE, JSON.stringify(newData, null, 2), (err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Failed to save data' });
-    }
+  try {
+    await db.collection('siteData').doc('main').set(newData);
     res.json({ success: true, message: 'Data saved successfully' });
-  });
+  } catch(err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to save data' });
+  }
 });
 
 // API to increment views
-app.post('/api/increment-view', (req, res) => {
+app.post('/api/increment-view', async (req, res) => {
   const { type, key, id, index } = req.body;
-  fs.readFile(DATA_FILE, 'utf8', (err, data) => {
-    if (err) return res.status(500).json({ error: 'Failed to read data' });
-    try {
-      const siteData = JSON.parse(data);
+  try {
+    const docRef = db.collection('siteData').doc('main');
+    await db.runTransaction(async (t) => {
+      const doc = await t.get(docRef);
+      if (!doc.exists) throw new Error("No data");
+      const siteData = doc.data();
+      
+      let updated = false;
       if (type === 'content' && key && id) {
         if (siteData.content && siteData.content[key]) {
           const item = siteData.content[key].find(i => i.id === id);
           if (item) {
             item.views = (item.views || 0) + 1;
+            updated = true;
           }
         }
       } else if (type === 'home' && index !== undefined) {
         if (siteData.homeArticles && siteData.homeArticles[index]) {
           siteData.homeArticles[index].views = (siteData.homeArticles[index].views || 0) + 1;
+          updated = true;
         }
       }
-      fs.writeFile(DATA_FILE, JSON.stringify(siteData, null, 2), (err) => {
-        if (err) return res.status(500).json({ error: 'Failed to save data' });
-        res.json({ success: true });
-      });
-    } catch (e) {
-      res.status(500).json({ error: 'Parse error' });
-    }
-  });
+      
+      if (updated) {
+        t.set(docRef, siteData);
+      }
+    });
+    res.json({ success: true });
+  } catch (e) {
+    console.error("Transaction error:", e);
+    res.status(500).json({ error: 'Failed to increment view' });
+  }
 });
 
 // API to upload files
@@ -191,7 +214,7 @@ app.post('/api/upload', requireAuth, upload.single('file'), (req, res) => {
     { 
       resource_type: resourceType,
       folder: 'maarifeshaikh_uploads',
-      public_id: filename // Set explicit public_id to preserve the custom name
+      public_id: filename
     },
     (error, result) => {
       if (error) {
@@ -233,12 +256,6 @@ app.post('/api/delete-file', (req, res) => {
       console.error(e);
       res.json({ success: true, message: 'File deleted (simulated)' });
     }
-  } else if (url.startsWith('/uploads/')) {
-    const filename = url.replace('/uploads/', '');
-    const filepath = path.join(__dirname, 'uploads', filename);
-    fs.unlink(filepath, (err) => {
-      res.json({ success: true, message: 'File deleted successfully' });
-    });
   } else {
     res.json({ success: true });
   }
@@ -246,11 +263,9 @@ app.post('/api/delete-file', (req, res) => {
 
 
 app.use((req, res, next) => {
-  // Exclude /api routes from this fallback
   if (req.url.startsWith('/api')) {
     return res.status(404).json({ error: 'Not found' });
   }
-  // Check if admin page is requested
   if (req.url.startsWith('/admin')) {
     return res.sendFile(path.join(__dirname, 'admin', 'index.html'));
   }
