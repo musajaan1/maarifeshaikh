@@ -1369,7 +1369,7 @@ function updateSearchUI() {
   const prevBtn = document.getElementById('inPageSearchPrev');
   const nextBtn = document.getElementById('inPageSearchNext');
   
-  countDisplay.textContent = \\/\\;
+  countDisplay.textContent = `${currentMatchIndex + 1}/${matchElements.length}`;
   countDisplay.style.display = 'inline-block';
   prevBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
