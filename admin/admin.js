@@ -190,6 +190,8 @@ function initAdmin() {
         seoTitle: document.getElementById('itemSeoTitle') ? document.getElementById('itemSeoTitle').value : '',
         seoDesc: document.getElementById('itemSeoDesc') ? document.getElementById('itemSeoDesc').value : '',
         seoKeywords: document.getElementById('itemSeoKeywords') ? document.getElementById('itemSeoKeywords').value : '',
+        audioUrl: document.getElementById('audioUrlLink') ? document.getElementById('audioUrlLink').value : '',
+        pdfUrl: document.getElementById('pdfUrlLink') ? document.getElementById('pdfUrlLink').value : '',
       };
 
       let oldItem = null;
@@ -1500,6 +1502,8 @@ window.editItem = function(dataKey, itemId) {
     if (document.getElementById('itemSeoTitle')) document.getElementById('itemSeoTitle').value = item.seoTitle || '';
     if (document.getElementById('itemSeoDesc')) document.getElementById('itemSeoDesc').value = item.seoDesc || '';
     if (document.getElementById('itemSeoKeywords')) document.getElementById('itemSeoKeywords').value = item.seoKeywords || '';
+    if (document.getElementById('audioUrlLink')) document.getElementById('audioUrlLink').value = item.audioUrl || '';
+    if (document.getElementById('pdfUrlLink')) document.getElementById('pdfUrlLink').value = item.pdfUrl || '';
 
     if (tinymce.get('richEditor')) {
       tinymce.get('richEditor').setContent(item.fullContent || '');

@@ -828,8 +828,9 @@ function initApp() {
     let rawContent = item.fullContent || item.excerpt;
     let extraMediaHtml = '';
     
-    if (currentCategory.type === 'book' && item.mediaUrl) {
-       let embedUrl = item.mediaUrl;
+    let finalPdfUrl = item.pdfUrl || (currentCategory.type === 'book' ? item.mediaUrl : null);
+    if (finalPdfUrl) {
+       let embedUrl = finalPdfUrl;
        if (embedUrl.includes('drive.google.com') && embedUrl.includes('/view')) {
          embedUrl = embedUrl.replace('/view', '/preview');
        }
@@ -837,13 +838,23 @@ function initApp() {
           embedUrl = embedUrl.replace('?usp=sharing', '').replace('&usp=sharing', '');
        }
        
-       extraMediaHtml = `
+       extraMediaHtml += `
          <div class="pdf-container" style="margin-top: 2rem; margin-bottom: 2rem; background: var(--parchment-2); padding: 1rem; border-radius: 12px; border: 1px solid var(--gold);">
            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem; flex-wrap: wrap; gap:10px;">
-             <h3 style="margin:0; color:var(--ink);">آنلائن مطالعہ کریں:</h3>
-             <a href="${item.mediaUrl}" target="_blank" class="btn-read-more" style="margin:0;"><i class="fa-solid fa-download"></i> کتاب ڈاؤن لوڈ کریں</a>
+             <h3 style="margin:0; color:var(--ink);">آن لائن مطالعہ کریں:</h3>
+             <a href="${finalPdfUrl}" target="_blank" class="btn-read-more" style="margin:0;"><i class="fa-solid fa-download"></i> ڈاؤن لوڈ کریں</a>
            </div>
            <iframe src="${embedUrl}" width="100%" height="800px" style="border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white;"></iframe>
+         </div>
+       `;
+    }
+
+    let finalAudioUrl = item.audioUrl || (currentCategory.type === 'audio' ? item.mediaUrl : null);
+    if (finalAudioUrl) {
+       extraMediaHtml += `
+         <div class="audio-container" style="margin-top: 2rem; margin-bottom: 2rem; background: var(--parchment-2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--gold); text-align: center;">
+           <h3 style="margin-bottom: 1rem; color: var(--ink);"><i class="fa-solid fa-headphones"></i> آڈیو بیان سنیں:</h3>
+           <audio controls style="width: 100%; max-width: 500px;" src="${finalAudioUrl}"></audio>
          </div>
        `;
     }
@@ -907,11 +918,45 @@ function initApp() {
     `;
 
     let rawContent = item.fullContent || item.excerpt;
+    let extraMediaHtml = '';
+    
+    let finalPdfUrl = item.pdfUrl;
+    if (finalPdfUrl) {
+       let embedUrl = finalPdfUrl;
+       if (embedUrl.includes('drive.google.com') && embedUrl.includes('/view')) {
+         embedUrl = embedUrl.replace('/view', '/preview');
+       }
+       if (embedUrl.includes('usp=sharing')) {
+          embedUrl = embedUrl.replace('?usp=sharing', '').replace('&usp=sharing', '');
+       }
+       
+       extraMediaHtml += `
+         <div class="pdf-container" style="margin-top: 2rem; margin-bottom: 2rem; background: var(--parchment-2); padding: 1rem; border-radius: 12px; border: 1px solid var(--gold);">
+           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem; flex-wrap: wrap; gap:10px;">
+             <h3 style="margin:0; color:var(--ink);">آن لائن مطالعہ کریں:</h3>
+             <a href="${finalPdfUrl}" target="_blank" class="btn-read-more" style="margin:0;"><i class="fa-solid fa-download"></i> ڈاؤن لوڈ کریں</a>
+           </div>
+           <iframe src="${embedUrl}" width="100%" height="800px" style="border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white;"></iframe>
+         </div>
+       `;
+    }
+
+    let finalAudioUrl = item.audioUrl;
+    if (finalAudioUrl) {
+       extraMediaHtml += `
+         <div class="audio-container" style="margin-top: 2rem; margin-bottom: 2rem; background: var(--parchment-2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--gold); text-align: center;">
+           <h3 style="margin-bottom: 1rem; color: var(--ink);"><i class="fa-solid fa-headphones"></i> آڈیو بیان سنیں:</h3>
+           <audio controls style="width: 100%; max-width: 500px;" src="${finalAudioUrl}"></audio>
+         </div>
+       `;
+    }
+
     const { html: parsedContent, toc: tocHtml, timeline: timelineHtml } = processContentFeatures(rawContent);
     
     setupArticleSidebar(tocHtml, timelineHtml);
     
-    document.getElementById("singleContent").innerHTML = parsedContent + shareHtml;
+    document.getElementById("singleContent").innerHTML = parsedContent + extraMediaHtml + shareHtml;
+    if (typeof initInPageSearch === 'function') initInPageSearch();
 
     // Increment view count for home article
     fetch('/api/increment-view', {
