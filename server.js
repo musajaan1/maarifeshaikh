@@ -7,6 +7,7 @@ const multer = require('multer');
 const { initializeApp, cert } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 let db;
+let dbInitError = null;
 try {
   let serviceAccount;
   if (process.env.FIREBASE_SERVICE_ACCOUNT) {
@@ -21,6 +22,7 @@ try {
   console.log("Firebase initialized");
 } catch (e) {
   console.error("Firebase init error", e);
+  dbInitError = e.message || String(e);
 }
 
 const app = express();
@@ -136,6 +138,9 @@ app.use(express.static(__dirname));
 // API to GET data
 app.get('/api/data', async (req, res) => {
   try {
+    if (!db) {
+       return res.status(500).json({ error: 'DB not initialized', details: dbInitError });
+    }
     const doc = await db.collection('siteData').doc('main').get();
     if (doc.exists) {
       res.json(doc.data());
