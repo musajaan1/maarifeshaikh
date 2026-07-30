@@ -799,9 +799,10 @@ function initApp() {
     const url = window.location.href;
     const shareHtml = `
       <div class="share-buttons">
-        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(item.title + ' - ' + url)}" target="_blank" class="share-btn share-wa"><i class="fab fa-whatsapp"></i> واٹس ایپ پر شیئر کریں</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" class="share-btn share-fb"><i class="fab fa-facebook-f"></i> فیس بک</a>
-        <button onclick="navigator.clipboard.writeText('${url}'); alert('لنک کاپی ہو گیا!');" class="share-btn share-copy"><i class="fas fa-link"></i> لنک کاپی کریں</button>
+        <button onclick="navigator.clipboard.writeText('${url}'); alert('لنک کاپی ہو گیا!');" class="share-btn share-copy" title="لنک کاپی کریں"><i class="fas fa-link"></i></button>
+        <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}" target="_blank" class="share-btn share-tw" title="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" class="share-btn share-fb" title="فیس بک"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(item.title + ' - ' + url)}" target="_blank" class="share-btn share-wa" title="واٹس ایپ"><i class="fab fa-whatsapp"></i></a>
       </div>
     `;
     
@@ -896,9 +897,10 @@ function initApp() {
     const url = window.location.href;
     const shareHtml = `
       <div class="share-buttons">
-        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(item.title + ' - ' + url)}" target="_blank" class="share-btn share-wa"><i class="fab fa-whatsapp"></i> واٹس ایپ پر شیئر کریں</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" class="share-btn share-fb"><i class="fab fa-facebook-f"></i> فیس بک</a>
-        <button onclick="navigator.clipboard.writeText('${url}'); alert('لنک کاپی ہو گیا!');" class="share-btn share-copy"><i class="fas fa-link"></i> لنک کاپی کریں</button>
+        <button onclick="navigator.clipboard.writeText('${url}'); alert('لنک کاپی ہو گیا!');" class="share-btn share-copy" title="لنک کاپی کریں"><i class="fas fa-link"></i></button>
+        <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}" target="_blank" class="share-btn share-tw" title="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" class="share-btn share-fb" title="فیس بک"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(item.title + ' - ' + url)}" target="_blank" class="share-btn share-wa" title="واٹس ایپ"><i class="fab fa-whatsapp"></i></a>
       </div>
     `;
 

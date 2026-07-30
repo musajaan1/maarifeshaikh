@@ -925,9 +925,10 @@ ul {
 .share-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.8rem 1.5rem;
-  border-radius: 50px;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   color: white;
   text-decoration: none;
   font-weight: 600;
@@ -940,7 +941,7 @@ ul {
   outline: none;
 }
 .share-btn i {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 .share-btn:hover {
   transform: translateY(-3px);
@@ -957,6 +958,12 @@ ul {
 }
 .share-fb:hover {
   background: linear-gradient(135deg, #145dbf, #0f4691);
+}
+.share-tw { 
+  background: linear-gradient(135deg, #333, #000); 
+}
+.share-tw:hover {
+  background: linear-gradient(135deg, #000, #333);
 }
 .share-copy { 
   background: linear-gradient(135deg, #6b7280, #4b5563); 
