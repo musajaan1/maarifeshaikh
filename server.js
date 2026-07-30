@@ -10,7 +10,10 @@ let db;
 let dbInitError = null;
 try {
   let serviceAccount;
-  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
+    const decoded = Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf-8');
+    serviceAccount = JSON.parse(decoded);
+  } else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
     const match = process.env.FIREBASE_SERVICE_ACCOUNT.match(/\{[\s\S]*\}/);
     if (match) {
       serviceAccount = JSON.parse(match[0]);
