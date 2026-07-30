@@ -810,7 +810,9 @@ ul {
   border-radius: 0 0 16px 16px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.06);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   gap: 0.8rem;
   margin: -1rem -1.5rem 1rem -1.5rem;
   border: 1px solid rgba(255,255,255,0.5);
@@ -1299,4 +1301,12 @@ ul {
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* In-Page Search Highlight */
+mark.current-match {
+  background-color: #ff9800 !important;
+  color: white !important;
+  border-radius: 2px;
+  padding: 0 2px;
 }

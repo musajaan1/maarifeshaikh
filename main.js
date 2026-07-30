@@ -853,6 +853,7 @@ function initApp() {
     setupArticleSidebar(tocHtml, timelineHtml);
     
     document.getElementById("singleContent").innerHTML = parsedContent + extraMediaHtml + shareHtml + relatedHtml;
+    if (typeof initInPageSearch === 'function') initInPageSearch();
 
     attachGlobalEvents();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1279,4 +1280,114 @@ function initApp() {
 
   // Initial render
   renderHome();
+}
+// --- In-Page Search Logic ---
+let markInstance = null;
+let currentMatchIndex = -1;
+let matchElements = [];
+
+function initInPageSearch() {
+  const contentElement = document.getElementById('singleContent');
+  if (!contentElement || !window.Mark) return;
+  
+  if (markInstance) {
+    markInstance.unmark();
+  }
+  markInstance = new Mark(contentElement);
+  currentMatchIndex = -1;
+  matchElements = [];
+  
+  const searchInput = document.getElementById('inPageSearchInput');
+  const countDisplay = document.getElementById('inPageSearchCount');
+  const prevBtn = document.getElementById('inPageSearchPrev');
+  const nextBtn = document.getElementById('inPageSearchNext');
+  
+  if (!searchInput) return;
+  
+  // Clear previous state
+  searchInput.value = '';
+  countDisplay.style.display = 'none';
+  prevBtn.style.display = 'none';
+  nextBtn.style.display = 'none';
+  
+  searchInput.addEventListener('input', function() {
+    const term = this.value.trim();
+    markInstance.unmark({
+      done: function() {
+        if (term.length > 0) {
+          markInstance.mark(term, {
+            separateWordSearch: false,
+            done: function() {
+              matchElements = contentElement.querySelectorAll('mark');
+              if (matchElements.length > 0) {
+                currentMatchIndex = 0;
+                updateSearchUI();
+                scrollToMatch(0);
+              } else {
+                countDisplay.textContent = '0/0';
+                countDisplay.style.display = 'inline-block';
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+              }
+            }
+          });
+        } else {
+          countDisplay.style.display = 'none';
+          prevBtn.style.display = 'none';
+          nextBtn.style.display = 'none';
+        }
+      }
+    });
+  });
+  
+  nextBtn.addEventListener('click', () => {
+    if (matchElements.length > 0) {
+      currentMatchIndex = (currentMatchIndex + 1) % matchElements.length;
+      updateSearchUI();
+      scrollToMatch(currentMatchIndex);
+    }
+  });
+  
+  prevBtn.addEventListener('click', () => {
+    if (matchElements.length > 0) {
+      currentMatchIndex = (currentMatchIndex - 1 + matchElements.length) % matchElements.length;
+      updateSearchUI();
+      scrollToMatch(currentMatchIndex);
+    }
+  });
+  
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      nextBtn.click();
+    }
+  });
+}
+
+function updateSearchUI() {
+  const countDisplay = document.getElementById('inPageSearchCount');
+  const prevBtn = document.getElementById('inPageSearchPrev');
+  const nextBtn = document.getElementById('inPageSearchNext');
+  
+  countDisplay.textContent = \\/\\;
+  countDisplay.style.display = 'inline-block';
+  prevBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
+  
+  matchElements.forEach((el, index) => {
+    if (index === currentMatchIndex) {
+      el.classList.add('current-match');
+    } else {
+      el.classList.remove('current-match');
+    }
+  });
+}
+
+function scrollToMatch(index) {
+  if (matchElements[index]) {
+    matchElements[index].scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+  }
 }
