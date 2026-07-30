@@ -11,7 +11,12 @@ let dbInitError = null;
 try {
   let serviceAccount;
   if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    const match = process.env.FIREBASE_SERVICE_ACCOUNT.match(/\{[\s\S]*\}/);
+    if (match) {
+      serviceAccount = JSON.parse(match[0]);
+    } else {
+      throw new Error("No valid JSON found in FIREBASE_SERVICE_ACCOUNT");
+    }
   } else {
     serviceAccount = require('./firebase-service-account.json');
   }
