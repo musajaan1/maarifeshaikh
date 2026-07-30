@@ -828,16 +828,16 @@ ul {
   margin-bottom: 0.5rem;
 }
 .section-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   width: 100%;
 }
 
 .section-card {
   background: #ffffff;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  border-radius: 50px;
   text-align: right;
   border: 1px solid rgba(0, 0, 0, 0.05);
   cursor: pointer;
@@ -849,7 +849,9 @@ ul {
   font-size: 1rem;
   color: var(--ink);
   box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1);
-  gap: 12px;
+  gap: 10px;
+  width: max-content;
+  max-width: 100%;
 }
 
 .section-card i {
