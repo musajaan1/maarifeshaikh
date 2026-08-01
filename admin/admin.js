@@ -669,18 +669,38 @@ function initAdmin() {
     const div = document.createElement('div');
     div.className = 'news-item-row';
     div.style.display = 'flex';
+    div.style.flexDirection = 'column';
     div.style.gap = '10px';
-    div.style.marginBottom = '10px';
-    div.style.alignItems = 'center';
+    div.style.marginBottom = '15px';
+    div.style.padding = '15px';
+    div.style.border = '1px solid #ddd';
+    div.style.borderRadius = '8px';
+    div.style.background = '#fff';
     
+    const isNew = !content;
+
     div.innerHTML = `
-      <select class="news-type-select" style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
-        <option value="text" ${type === 'text' ? 'selected' : ''}>ٹیکسٹ</option>
-        <option value="image" ${type === 'image' ? 'selected' : ''}>تصویر (PNG)</option>
-      </select>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="news-drag-handle" style="cursor: grab; color: #999; padding: 0 5px;" title="ڈرैग اینڈ ڈراپ"><i class="fas fa-grip-vertical"></i></span>
+        
+        <div style="flex:1; display:flex; gap:10px; margin-left: 10px; align-items:center;">
+          <select class="news-type-select" style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+            <option value="text" ${type === 'text' ? 'selected' : ''}>ٹیکسٹ</option>
+            <option value="image" ${type === 'image' ? 'selected' : ''}>تصویر (PNG)</option>
+          </select>
+          <button type="button" class="btn-edit-news" style="display: ${isNew ? 'none' : 'inline-block'}; background:#17a2b8; color:#fff; border:none; padding:5px 15px; border-radius:4px; cursor:pointer;"><i class="fas fa-edit"></i> ایڈٹ کریں</button>
+          <button type="button" class="btn-done-news" style="display: ${isNew ? 'inline-block' : 'none'}; background:#28a745; color:#fff; border:none; padding:5px 15px; border-radius:4px; cursor:pointer;"><i class="fas fa-check"></i> ڈن (محفوظ)</button>
+          <button type="button" class="btn-delete remove-news-btn" style="background:#dc3545; color:#fff; border:none; padding:5px 15px; border-radius:4px; cursor:pointer;"><i class="fas fa-trash"></i> ڈیلیٹ</button>
+        </div>
+      </div>
       
-      <div class="news-input-container" style="flex: 1;">
-        <input type="text" class="news-text-input" placeholder="یہاں خبر درج کریں..." value="${type === 'text' ? content : ''}" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; display: ${type === 'text' ? 'block' : 'none'};">
+      <div class="news-input-container" style="margin-top: 5px;">
+        <div class="news-text-wrapper" style="display: ${type === 'text' ? 'block' : 'none'};">
+            <div class="news-display" style="display: ${isNew ? 'none' : 'block'}; padding: 10px; background: #f9f9f9; border: 1px solid #eee; border-radius: 4px; font-size: 1rem; color: #333; line-height: 1.6;">
+              ${content || 'کوئی خبر نہیں...'}
+            </div>
+            <textarea class="news-text-input" placeholder="یہاں خبر درج کریں..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; display: ${isNew ? 'block' : 'none'}; resize: vertical; min-height: 80px; font-family: inherit; font-size: 1rem; line-height: 1.6;">${type === 'text' ? content : ''}</textarea>
+        </div>
         
         <div class="news-image-wrapper" style="display: ${type === 'image' ? 'flex' : 'none'}; gap: 10px; align-items: center; width: 100%;">
           <label style="padding: 0.5rem 1rem; border: 1px solid #ccc; background: #f8f9fa; cursor: pointer; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;">
@@ -693,8 +713,6 @@ function initAdmin() {
           </div>
         </div>
       </div>
-      
-      <button type="button" class="btn-delete remove-news-btn" style="padding: 0.5rem 1rem;"><i class="fas fa-trash"></i></button>
     `;
     
     container.appendChild(div);
@@ -706,12 +724,38 @@ function initAdmin() {
     const urlInput = div.querySelector('.news-image-url');
     const imgPreview = div.querySelector('.news-image-preview');
 
+    const editBtn = div.querySelector('.btn-edit-news');
+    const doneBtn = div.querySelector('.btn-done-news');
+    const displayDiv = div.querySelector('.news-display');
+    const textWrapper = div.querySelector('.news-text-wrapper');
+
+    editBtn.addEventListener('click', () => {
+       if (typeSelect.value === 'text') {
+           displayDiv.style.display = 'none';
+           textInput.style.display = 'block';
+       }
+       editBtn.style.display = 'none';
+       doneBtn.style.display = 'inline-block';
+       textInput.focus();
+    });
+
+    doneBtn.addEventListener('click', () => {
+       if (typeSelect.value === 'text') {
+           displayDiv.textContent = textInput.value || 'کوئی خبر نہیں...';
+           displayDiv.style.display = 'block';
+           textInput.style.display = 'none';
+       }
+       editBtn.style.display = 'inline-block';
+       doneBtn.style.display = 'none';
+       renderNewsPreview();
+    });
+
     typeSelect.addEventListener('change', () => {
       if (typeSelect.value === 'text') {
-        textInput.style.display = 'block';
+        textWrapper.style.display = 'block';
         imageWrapper.style.display = 'none';
       } else {
-        textInput.style.display = 'none';
+        textWrapper.style.display = 'none';
         imageWrapper.style.display = 'flex';
       }
       renderNewsPreview();
