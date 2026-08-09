@@ -139,7 +139,32 @@ function initTinyMCE() {
     height: 400,
     menubar: false,
     plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
-    toolbar: 'undo redo | fontfamily fontsize blocks | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table | removeformat | help',
+    toolbar: 'undo redo | styles fontfamily fontsize | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table | removeformat | help',
+    style_formats: [
+      { title: 'عربی عبارات', items: [
+        { title: 'قرآنی آیت / حدیث', inline: 'span', styles: { fontFamily: "'Al Qalam Quran Majeed', 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', Arial", fontSize: '24pt', color: '#1B5E20', lineHeight: '2' } },
+        { title: 'عربی عام تحریر', inline: 'span', styles: { fontFamily: "'Al Qalam Quran Majeed', 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', Arial", fontSize: '20pt', lineHeight: '1.8' } }
+      ]},
+      { title: 'اردو عبارات', items: [
+        { title: 'عام تحریر (جمیل نوری)', inline: 'span', styles: { fontFamily: "'Jameel Noori Nastaleeq', 'Faiz Lahori Nastaleeq', Arial", fontSize: '18pt' } },
+        { title: 'خوبصورت اقتباس', block: 'blockquote', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", fontSize: '20pt', color: '#0056b3', padding: '10px', borderRight: '4px solid #0056b3', backgroundColor: '#f8f9fa' } }
+      ]},
+      { title: 'ہیڈنگز (عناوین)', items: [
+        { title: 'مرکزی عنوان (Heading 1)', block: 'h1', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", color: '#800000', textAlign: 'center' } },
+        { title: 'ذیلی عنوان (Heading 2)', block: 'h2', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", color: '#004080' } },
+        { title: 'چھوٹا عنوان (Heading 3)', block: 'h3', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", color: '#0066cc' } }
+      ]},
+      { title: 'Blocks (عام پیراگراف)', items: [
+        { title: 'Paragraph', block: 'p' },
+        { title: 'Heading 1', block: 'h1' },
+        { title: 'Heading 2', block: 'h2' },
+        { title: 'Heading 3', block: 'h3' },
+        { title: 'Heading 4', block: 'h4' },
+        { title: 'Heading 5', block: 'h5' },
+        { title: 'Heading 6', block: 'h6' },
+        { title: 'Preformatted', block: 'pre' }
+      ]}
+    ],
     font_family_formats: fontFormats,
     font_size_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt',
     content_style: contentStyle,
