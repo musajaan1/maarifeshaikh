@@ -397,16 +397,22 @@
             <p style="color: #666; margin-bottom: 1.5rem;">یہاں سے آپ اپنی پسند کے فونٹس (.ttf, .woff) اپلوڈ کر سکتے ہیں اور پھر انہیں ٹیکسٹ ایڈیٹر میں استعمال کر سکتے ہیں۔</p>
             
             <h3 style="margin-bottom: 1rem;">نیا فونٹ شامل کریں</h3>
-            <div class="form-row" style="align-items: flex-end; margin-bottom: 2rem; background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #e9ecef;">
-              <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <div class="form-row" style="align-items: flex-end; margin-bottom: 2rem; background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #e9ecef; flex-wrap: wrap; gap: 1rem;">
+              <div class="form-group" style="flex: 1; min-width: 250px; margin-bottom: 0;">
                 <label>فونٹ کا نام (انگریزی میں لکھیں، جیسے: Khat-e-Sulus):</label>
-                <input type="text" id="newFontName" placeholder="Khat-e-Sulus" dir="ltr" style="text-align: left;">
+                <input type="text" id="newFontName" placeholder="FaizNastaliq" dir="ltr" style="text-align: left;">
               </div>
-              <div class="form-group" style="flex: 1; margin-bottom: 0;">
-                <label>فونٹ فائل (.ttf یا .woff):</label>
+              <div class="form-group" style="flex: 1; min-width: 250px; margin-bottom: 0;">
+                <label>فونٹ فائل (چھوٹے فونٹس کے لیے):</label>
                 <input type="file" id="newFontFile" accept=".ttf,.woff,.woff2">
               </div>
-              <button type="button" class="btn-submit" id="addFontBtn" style="width: auto; margin-bottom: 0;"><i class="fas fa-upload"></i> اپلوڈ کریں</button>
+              <div class="form-group" style="flex: 1; min-width: 250px; margin-bottom: 0;">
+                <label>یا ڈائریکٹ لنک دیں (بڑے فونٹس جیسے نستعلیق کے لیے، archive.org سے):</label>
+                <input type="url" id="newFontUrl" placeholder="https://..." dir="ltr" style="text-align: left;">
+              </div>
+              <div style="width: 100%; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn-submit" id="addFontBtn" style="width: auto; margin-bottom: 0;"><i class="fas fa-upload"></i> شامل کریں</button>
+              </div>
             </div>
             
             <hr style="margin-bottom: 2rem; border-top: 1px solid #ddd;">

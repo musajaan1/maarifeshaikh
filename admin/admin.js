@@ -918,28 +918,35 @@ function initAdmin() {
     addFontBtn.addEventListener('click', async () => {
       const fontName = document.getElementById('newFontName').value.trim();
       const fontFile = document.getElementById('newFontFile').files[0];
+      const fontUrlInput = document.getElementById('newFontUrl');
+      const fontUrl = fontUrlInput ? fontUrlInput.value.trim() : '';
       
       if (!fontName) {
         showStatus('براہ کرم فونٹ کا نام لکھیں۔', 'error', 'fontStatusMessage');
         return;
       }
-      if (!fontFile) {
-        showStatus('براہ کرم فونٹ کی فائل منتخب کریں۔', 'error', 'fontStatusMessage');
+      if (!fontFile && !fontUrl) {
+        showStatus('براہ کرم فونٹ کی فائل منتخب کریں یا ڈائریکٹ لنک دیں۔', 'error', 'fontStatusMessage');
         return;
       }
       
       const originalText = addFontBtn.innerHTML;
-      addFontBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> اپلوڈ ہو رہا ہے...';
+      addFontBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> پروسیس ہو رہا ہے...';
       addFontBtn.disabled = true;
       
       try {
-        const fileUrl = await uploadFile(fontFile);
+        let finalUrl = fontUrl;
+        if (fontFile) {
+          finalUrl = await uploadFile(fontFile);
+        }
+
         if (!siteData.customFonts) siteData.customFonts = [];
-        siteData.customFonts.push({ name: fontName, url: fileUrl });
+        siteData.customFonts.push({ name: fontName, url: finalUrl });
         
         saveDataToServer(() => {
           document.getElementById('newFontName').value = '';
           document.getElementById('newFontFile').value = '';
+          if (fontUrlInput) fontUrlInput.value = '';
           renderCustomFonts();
           applyCustomFontsToAdmin();
           initTinyMCE();
@@ -948,7 +955,7 @@ function initAdmin() {
           addFontBtn.disabled = false;
         });
       } catch (err) {
-        showStatus('اپلوڈ میں مسئلہ آیا۔', 'error', 'fontStatusMessage');
+        showStatus('فائل کا سائز بڑا ہونے کی صورت میں مسئلہ آ سکتا ہے۔ (حد 10 ایم بی)', 'error', 'fontStatusMessage');
         addFontBtn.innerHTML = originalText;
         addFontBtn.disabled = false;
       }
