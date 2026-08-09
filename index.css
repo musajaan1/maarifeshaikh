@@ -769,7 +769,7 @@ ul {
       flex: none;
       width: 100%;
       position: sticky;
-      top: 155px; /* Clear both site-header and sticky-top-nav */
+      top: 190px; /* Clear site-header + sticky-top-nav + gap */
       z-index: 998;
       margin-bottom: 2rem;
     }
