@@ -139,8 +139,9 @@ function initTinyMCE() {
     height: 400,
     menubar: false,
     plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
-    toolbar: 'undo redo | fontfamily blocks | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table | removeformat | help',
+    toolbar: 'undo redo | fontfamily fontsize blocks | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table | removeformat | help',
     font_family_formats: fontFormats,
+    font_size_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt',
     content_style: contentStyle,
     setup: function(editor) {
       editor.on('change', function() {
