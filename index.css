@@ -763,14 +763,14 @@ ul {
 
 @media (max-width: 900px) {
   .article-layout {
-    flex-direction: column;
+    display: block;
   }
     .article-sidebar {
       flex: none;
       width: 100%;
       position: sticky;
-      top: 70px;
-      z-index: 100;
+      top: 155px; /* Clear both site-header and sticky-top-nav */
+      z-index: 998;
       margin-bottom: 2rem;
     }
   
