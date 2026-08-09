@@ -2113,8 +2113,14 @@ function buildStyleFormats() {
     const customCategory = { title: 'میرے کسٹم سٹائلز', items: [] };
     customStyles.forEach(style => {
       let format = { title: style.name };
-      if (style.type === 'span') format.inline = 'span';
-      else format.block = style.type;
+      if (style.type === 'span') {
+        format.inline = 'span';
+      } else if (style.type === 'span_arabic') {
+        format.inline = 'span';
+        format.attributes = { dir: 'rtl', lang: 'ar' };
+      } else {
+        format.block = style.type;
+      }
       
       format.styles = {};
       if (style.font) format.styles.fontFamily = style.font;
@@ -2131,6 +2137,21 @@ function buildStyleFormats() {
 }
 
 function renderEditorStyles() {
+  const fontSelect = document.getElementById('newStyleFont');
+  if (fontSelect) {
+    fontSelect.innerHTML = `
+      <option value="">Default</option>
+      <option value="'Jameel Noori Nastaleeq', Arial">Jameel Noori Nastaleeq</option>
+      <option value="'Faiz Lahori Nastaleeq', Arial">Faiz Lahori Nastaleeq</option>
+      <option value="'Al Qalam Quran Majeed', 'KFGQPC Uthman Taha Naskh', Arial">Arabic (Al Qalam/Uthmani)</option>
+    `;
+    if (siteData && siteData.customFonts) {
+      siteData.customFonts.forEach(f => {
+        fontSelect.appendChild(new Option(f.name, `'${f.name}', sans-serif`));
+      });
+    }
+  }
+
   const tbody = document.getElementById('stylesTableBody');
   if (!tbody) return;
   tbody.innerHTML = '';
