@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
       applyBackground();
       applyLogo();
       applyThemeColors();
+      applyCustomFonts();
       populateFooter();
       initApp();
     })
@@ -62,6 +63,31 @@ function applyLogo() {
     logoLink.onmouseover = () => logoLink.style.transform = 'scale(1.05)';
     logoLink.onmouseout = () => logoLink.style.transform = 'scale(1)';
     logoLink.style.transition = 'transform 0.3s ease';
+  }
+}
+
+// --- Custom Fonts ---
+function applyCustomFonts() {
+  if (siteData && siteData.customFonts && siteData.customFonts.length > 0) {
+    let styleId = 'custom-fonts-frontend-style';
+    let styleEl = document.getElementById(styleId);
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = styleId;
+      document.head.appendChild(styleEl);
+    }
+    
+    let cssStr = '';
+    siteData.customFonts.forEach(f => {
+      cssStr += `
+        @font-face {
+          font-family: '${f.name}';
+          src: url('${f.url}');
+          font-display: swap;
+        }
+      `;
+    });
+    styleEl.innerHTML = cssStr;
   }
 }
 

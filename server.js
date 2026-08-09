@@ -225,6 +225,8 @@ app.post('/api/upload', requireAuth, upload.single('file'), (req, res) => {
     resourceType = 'image';
   } else if (ext === '.mp3' || ext === '.wav') {
     resourceType = 'video';
+  } else if (ext === '.ttf' || ext === '.woff' || ext === '.woff2') {
+    resourceType = 'raw';
   }
 
   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);

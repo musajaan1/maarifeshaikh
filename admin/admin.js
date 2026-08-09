@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById('section-dashboard').style.display = 'block';
       
       initAdmin();
+      applyCustomFontsToAdmin();
+      renderCustomFonts();
       renderDashboard();
       if(typeof initThemeColors === 'function') initThemeColors();
       if(typeof applyThemeColors === 'function') applyThemeColors();
@@ -46,15 +48,100 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// --- Custom Fonts ---
+function applyCustomFontsToAdmin() {
+  let customFonts = siteData && siteData.customFonts ? siteData.customFonts : [];
+  let styleId = 'custom-fonts-admin-style';
+  let styleEl = document.getElementById(styleId);
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = styleId;
+    document.head.appendChild(styleEl);
+  }
+  
+  let cssStr = '';
+  customFonts.forEach(f => {
+    cssStr += `
+      @font-face {
+        font-family: '${f.name}';
+        src: url('${f.url}');
+        font-display: swap;
+      }
+    `;
+  });
+  styleEl.innerHTML = cssStr;
+}
+
+function renderCustomFonts() {
+  const container = document.getElementById('customFontsListContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  let customFonts = siteData && siteData.customFonts ? siteData.customFonts : [];
+  
+  if (customFonts.length === 0) {
+    container.innerHTML = '<p style="color:#666;">کوئی فونٹ موجود نہیں۔</p>';
+    return;
+  }
+
+  customFonts.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.style = 'display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 15px; border:1px solid #ddd; border-radius:4px;';
+    div.innerHTML = `
+      <div style="font-family: '${f.name}', sans-serif; font-size:1.5rem;">
+        ${f.name} <span style="color:#999; font-size:0.9rem;">(نمونہ - Sample)</span>
+      </div>
+      <button type="button" class="btn-delete" onclick="deleteCustomFont(${i})" style="padding:0.5rem 1rem; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;"><i class="fas fa-trash"></i></button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+window.deleteCustomFont = function(index) {
+  if (confirm('کیا آپ واقعی یہ فونٹ ڈیلیٹ کرنا چاہتے ہیں؟')) {
+    siteData.customFonts.splice(index, 1);
+    saveDataToServer(() => {
+      renderCustomFonts();
+      applyCustomFontsToAdmin();
+      initTinyMCE();
+      showStatus('فونٹ کامیابی سے ڈیلیٹ ہو گیا۔', 'success', 'fontStatusMessage');
+    });
+  }
+};
+
 function initTinyMCE() {
+  if (tinymce.get('richEditor')) tinymce.remove('#richEditor');
+  if (tinymce.get('homeRichEditor')) tinymce.remove('#homeRichEditor');
+
+  let customFonts = siteData && siteData.customFonts ? siteData.customFonts : [];
+  let fontFormats = 'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats;';
+  
+  let contentStyle = 'body { font-family: sans-serif; font-size: 16px; direction: rtl; }';
+
+  if (customFonts.length > 0) {
+    let customFontFormats = customFonts.map(f => `${f.name}=${f.name}`).join('; ') + '; ';
+    fontFormats = customFontFormats + fontFormats;
+
+    customFonts.forEach(f => {
+      contentStyle += `
+        @font-face {
+          font-family: '${f.name}';
+          src: url('${f.url}');
+          font-display: swap;
+        }
+      `;
+    });
+  }
+
   tinymce.init({
     selector: '#richEditor, #homeRichEditor',
     directionality: 'rtl',
     height: 400,
     menubar: false,
     plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
-    toolbar: 'undo redo | blocks | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table | removeformat | help',
-    content_style: 'body { font-family: sans-serif; font-size: 16px; }',
+    toolbar: 'undo redo | fontfamily blocks | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table | removeformat | help',
+    font_family_formats: fontFormats,
+    content_style: contentStyle,
     setup: function(editor) {
       editor.on('change', function() {
         tinymce.triggerSave();
@@ -325,6 +412,12 @@ function initAdmin() {
     e.preventDefault();
     showSection('nav-ad', 'section-ad');
     loadAdData();
+  });
+
+  document.getElementById('nav-fonts').addEventListener('click', (e) => {
+    e.preventDefault();
+    showSection('nav-fonts', 'section-fonts');
+    renderCustomFonts();
   });
 
   document.getElementById('nav-news').addEventListener('click', (e) => {
@@ -819,6 +912,48 @@ function initAdmin() {
       });
     }
   });
+
+  const addFontBtn = document.getElementById('addFontBtn');
+  if (addFontBtn) {
+    addFontBtn.addEventListener('click', async () => {
+      const fontName = document.getElementById('newFontName').value.trim();
+      const fontFile = document.getElementById('newFontFile').files[0];
+      
+      if (!fontName) {
+        showStatus('براہ کرم فونٹ کا نام لکھیں۔', 'error', 'fontStatusMessage');
+        return;
+      }
+      if (!fontFile) {
+        showStatus('براہ کرم فونٹ کی فائل منتخب کریں۔', 'error', 'fontStatusMessage');
+        return;
+      }
+      
+      const originalText = addFontBtn.innerHTML;
+      addFontBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> اپلوڈ ہو رہا ہے...';
+      addFontBtn.disabled = true;
+      
+      try {
+        const fileUrl = await uploadFile(fontFile);
+        if (!siteData.customFonts) siteData.customFonts = [];
+        siteData.customFonts.push({ name: fontName, url: fileUrl });
+        
+        saveDataToServer(() => {
+          document.getElementById('newFontName').value = '';
+          document.getElementById('newFontFile').value = '';
+          renderCustomFonts();
+          applyCustomFontsToAdmin();
+          initTinyMCE();
+          showStatus('فونٹ کامیابی سے شامل ہو گیا۔', 'success', 'fontStatusMessage');
+          addFontBtn.innerHTML = originalText;
+          addFontBtn.disabled = false;
+        });
+      } catch (err) {
+        showStatus('اپلوڈ میں مسئلہ آیا۔', 'error', 'fontStatusMessage');
+        addFontBtn.innerHTML = originalText;
+        addFontBtn.disabled = false;
+      }
+    });
+  }
 
   const addNewsBtn = document.getElementById('addNewsBtn');
   if (addNewsBtn) {
