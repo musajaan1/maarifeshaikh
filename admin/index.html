@@ -29,6 +29,7 @@
         <a href="#" id="nav-footer"><i class="fas fa-shoe-prints"></i> فٹر کا انتظام</a>
         <a href="#" id="nav-bg"><i class="fas fa-paint-roller"></i> پس منظر (Background)</a>
         <a href="#" id="nav-fonts"><i class="fas fa-font"></i> کسٹم فونٹس</a>
+        <a href="#" id="nav-editor-styles"><i class="fas fa-paint-brush"></i> کسٹم سٹائلز</a>
         <a href="#" id="nav-security"><i class="fas fa-lock"></i> سیکیورٹی سیٹنگز</a>
         <a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> ویب سائٹ دیکھیں</a>
         <a href="#" id="nav-logout" style="color: #dc3545; margin-top: 1rem;"><i class="fas fa-sign-out-alt"></i> لاگ آؤٹ کریں</a>
@@ -423,6 +424,79 @@
             </div>
             
             <div id="fontStatusMessage" class="status-msg"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-editor-styles" class="admin-section" style="display: none;">
+        <div class="card">
+          <h2 class="card-title">ایڈیٹر سٹائلز مینیجر (Editor Styles)</h2>
+          <div class="admin-form">
+            <p style="color: #666; margin-bottom: 1.5rem;">یہاں سے آپ اپنی مرضی کے سٹائلز بنا سکتے ہیں جو ٹیکسٹ ایڈیٹر کی ٹول بار میں نظر آئیں گے۔</p>
+            
+            <h3 style="margin-bottom: 1rem;">نیا سٹائل بنائیں</h3>
+            <div class="form-row" style="align-items: flex-end; margin-bottom: 2rem; background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #e9ecef; flex-wrap: wrap; gap: 1rem;">
+              <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                <label>سٹائل کا نام (Name):</label>
+                <input type="text" id="newStyleName" placeholder="مثلاً: خاص اقتباس">
+              </div>
+              <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                <label>قسم (Element):</label>
+                <select id="newStyleType">
+                  <option value="span">عام تحریر (Inline)</option>
+                  <option value="p">پیراگراف (Paragraph)</option>
+                  <option value="h1">مرکزی عنوان (Heading 1)</option>
+                  <option value="h2">ذیلی عنوان (Heading 2)</option>
+                  <option value="h3">چھوٹا عنوان (Heading 3)</option>
+                  <option value="blockquote">اقتباس (Quote)</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                <label>فونٹ (Font):</label>
+                <select id="newStyleFont">
+                  <option value="">Default</option>
+                  <option value="'Jameel Noori Nastaleeq', Arial">Jameel Noori Nastaleeq</option>
+                  <option value="'Faiz Lahori Nastaleeq', Arial">Faiz Lahori Nastaleeq</option>
+                  <option value="'Al Qalam Quran Majeed', 'KFGQPC Uthman Taha Naskh', Arial">Arabic (Al Qalam/Uthmani)</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 1; min-width: 100px; margin-bottom: 0;">
+                <label>سائز (Size):</label>
+                <input type="text" id="newStyleSize" placeholder="20pt" dir="ltr">
+              </div>
+              <div class="form-group" style="flex: 1; min-width: 100px; margin-bottom: 0;">
+                <label>رنگ (Text Color):</label>
+                <input type="color" id="newStyleColor" value="#000000" style="height: 40px; padding: 0;">
+              </div>
+              <div class="form-group" style="flex: 1; min-width: 100px; margin-bottom: 0;">
+                <label>بیک گراؤنڈ (Background):</label>
+                <input type="color" id="newStyleBgColor" value="#ffffff" style="height: 40px; padding: 0;">
+              </div>
+              <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
+                <button type="button" class="btn" id="saveStyleBtn"><i class="fas fa-save"></i> محفوظ کریں</button>
+              </div>
+            </div>
+
+            <h3 style="margin-bottom: 1rem;">محفوظ شدہ کسٹم سٹائلز</h3>
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>نام</th>
+                    <th>قسم</th>
+                    <th>فونٹ</th>
+                    <th>سائز</th>
+                    <th>رنگ</th>
+                    <th>بیک گراؤنڈ</th>
+                    <th>ایکشن</th>
+                  </tr>
+                </thead>
+                <tbody id="stylesTableBody">
+                  <!-- Styles will be injected here -->
+                </tbody>
+              </table>
+            </div>
+            <div id="styleStatusMessage" class="status-msg"></div>
           </div>
         </div>
       </section>

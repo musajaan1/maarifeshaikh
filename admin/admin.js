@@ -139,32 +139,8 @@ function initTinyMCE() {
     height: 400,
     menubar: false,
     plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
-    toolbar: 'undo redo | styles fontfamily fontsize | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table | removeformat | help',
-    style_formats: [
-      { title: 'عربی عبارات', items: [
-        { title: 'قرآنی آیت / حدیث', inline: 'span', styles: { fontFamily: "'Al Qalam Quran Majeed', 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', Arial", fontSize: '24pt', color: '#1B5E20', lineHeight: '2' } },
-        { title: 'عربی عام تحریر', inline: 'span', styles: { fontFamily: "'Al Qalam Quran Majeed', 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', Arial", fontSize: '20pt', lineHeight: '1.8' } }
-      ]},
-      { title: 'اردو عبارات', items: [
-        { title: 'عام تحریر (جمیل نوری)', inline: 'span', styles: { fontFamily: "'Jameel Noori Nastaleeq', 'Faiz Lahori Nastaleeq', Arial", fontSize: '18pt' } },
-        { title: 'خوبصورت اقتباس', block: 'blockquote', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", fontSize: '20pt', color: '#0056b3', padding: '10px', borderRight: '4px solid #0056b3', backgroundColor: '#f8f9fa' } }
-      ]},
-      { title: 'ہیڈنگز (عناوین)', items: [
-        { title: 'مرکزی عنوان (Heading 1)', block: 'h1', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", color: '#800000', textAlign: 'center' } },
-        { title: 'ذیلی عنوان (Heading 2)', block: 'h2', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", color: '#004080' } },
-        { title: 'چھوٹا عنوان (Heading 3)', block: 'h3', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", color: '#0066cc' } }
-      ]},
-      { title: 'Blocks (عام پیراگراف)', items: [
-        { title: 'Paragraph', block: 'p' },
-        { title: 'Heading 1', block: 'h1' },
-        { title: 'Heading 2', block: 'h2' },
-        { title: 'Heading 3', block: 'h3' },
-        { title: 'Heading 4', block: 'h4' },
-        { title: 'Heading 5', block: 'h5' },
-        { title: 'Heading 6', block: 'h6' },
-        { title: 'Preformatted', block: 'pre' }
-      ]}
-    ],
+    toolbar: 'undo redo | styles fontfamily fontsize forecolor backcolor | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table | removeformat | help',
+    style_formats: buildStyleFormats(),
     font_family_formats: fontFormats,
     font_size_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt',
     content_style: contentStyle,
@@ -444,6 +420,12 @@ function initAdmin() {
     e.preventDefault();
     showSection('nav-fonts', 'section-fonts');
     renderCustomFonts();
+  });
+
+  document.getElementById('nav-editor-styles').addEventListener('click', (e) => {
+    e.preventDefault();
+    showSection('nav-editor-styles', 'section-editor-styles');
+    renderEditorStyles();
   });
 
   document.getElementById('nav-news').addEventListener('click', (e) => {
@@ -2093,6 +2075,137 @@ window.deleteMessage = function(msgId) {
       showStatus('پیغام ڈیلیٹ ہو گیا!', 'success');
       renderMessages();
       renderDashboard(); // update count
+    });
+  }
+};
+
+// --- Editor Styles Manager ---
+
+function buildStyleFormats() {
+  const predefinedStyles = [
+    { title: 'عربی عبارات', items: [
+      { title: 'قرآنی آیت / حدیث', inline: 'span', styles: { fontFamily: "'Al Qalam Quran Majeed', 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', Arial", fontSize: '24pt', color: '#1B5E20', lineHeight: '2' } },
+      { title: 'عربی عام تحریر', inline: 'span', styles: { fontFamily: "'Al Qalam Quran Majeed', 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', Arial", fontSize: '20pt', lineHeight: '1.8' } }
+    ]},
+    { title: 'اردو عبارات', items: [
+      { title: 'عام تحریر (جمیل نوری)', inline: 'span', styles: { fontFamily: "'Jameel Noori Nastaleeq', 'Faiz Lahori Nastaleeq', Arial", fontSize: '18pt' } },
+      { title: 'خوبصورت اقتباس', block: 'blockquote', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", fontSize: '20pt', color: '#0056b3', padding: '10px', borderRight: '4px solid #0056b3', backgroundColor: '#f8f9fa' } }
+    ]},
+    { title: 'ہیڈنگز (عناوین)', items: [
+      { title: 'مرکزی عنوان (Heading 1)', block: 'h1', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", color: '#800000', textAlign: 'center' } },
+      { title: 'ذیلی عنوان (Heading 2)', block: 'h2', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", color: '#004080' } },
+      { title: 'چھوٹا عنوان (Heading 3)', block: 'h3', styles: { fontFamily: "'Jameel Noori Nastaleeq', Arial", color: '#0066cc' } }
+    ]},
+    { title: 'Blocks (عام پیراگراف)', items: [
+      { title: 'Paragraph', block: 'p' },
+      { title: 'Heading 1', block: 'h1' },
+      { title: 'Heading 2', block: 'h2' },
+      { title: 'Heading 3', block: 'h3' },
+      { title: 'Heading 4', block: 'h4' },
+      { title: 'Heading 5', block: 'h5' },
+      { title: 'Heading 6', block: 'h6' },
+      { title: 'Preformatted', block: 'pre' }
+    ]}
+  ];
+
+  let customStyles = siteData && siteData.customEditorStyles ? siteData.customEditorStyles : [];
+  if (customStyles.length > 0) {
+    const customCategory = { title: 'میرے کسٹم سٹائلز', items: [] };
+    customStyles.forEach(style => {
+      let format = { title: style.name };
+      if (style.type === 'span') format.inline = 'span';
+      else format.block = style.type;
+      
+      format.styles = {};
+      if (style.font) format.styles.fontFamily = style.font;
+      if (style.size) format.styles.fontSize = style.size;
+      if (style.color && style.color !== '#000000') format.styles.color = style.color;
+      if (style.bgColor && style.bgColor !== '#ffffff') format.styles.backgroundColor = style.bgColor;
+      
+      customCategory.items.push(format);
+    });
+    predefinedStyles.unshift(customCategory);
+  }
+
+  return predefinedStyles;
+}
+
+function renderEditorStyles() {
+  const tbody = document.getElementById('stylesTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  
+  let styles = siteData && siteData.customEditorStyles ? siteData.customEditorStyles : [];
+  
+  if (styles.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">کوئی کسٹم سٹائل موجود نہیں۔</td></tr>';
+    return;
+  }
+  
+  styles.forEach((style, index) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${style.name}</td>
+      <td dir="ltr">${style.type}</td>
+      <td dir="ltr" style="font-size:0.85rem;">${style.font || 'Default'}</td>
+      <td dir="ltr">${style.size || '-'}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <div style="width:15px;height:15px;background:${style.color};border:1px solid #ccc;"></div>
+          ${style.color}
+        </div>
+      </td>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <div style="width:15px;height:15px;background:${style.bgColor};border:1px solid #ccc;"></div>
+          ${style.bgColor}
+        </div>
+      </td>
+      <td>
+        <button class="btn btn-sm" style="background:#dc3545; color: white;" onclick="deleteEditorStyle(${index})"><i class="fas fa-trash"></i> ڈیلیٹ</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+document.getElementById('saveStyleBtn').addEventListener('click', () => {
+  const name = document.getElementById('newStyleName').value.trim();
+  const type = document.getElementById('newStyleType').value;
+  const font = document.getElementById('newStyleFont').value;
+  const size = document.getElementById('newStyleSize').value.trim();
+  const color = document.getElementById('newStyleColor').value;
+  const bgColor = document.getElementById('newStyleBgColor').value;
+  
+  if (!name) {
+    showStatus('براہ کرم سٹائل کا نام درج کریں۔', 'error', 'styleStatusMessage');
+    return;
+  }
+  
+  if (!siteData.customEditorStyles) siteData.customEditorStyles = [];
+  
+  siteData.customEditorStyles.push({
+    name, type, font, size, color, bgColor
+  });
+  
+  saveDataToServer(() => {
+    showStatus('سٹائل کامیابی سے محفوظ ہو گیا!', 'success', 'styleStatusMessage');
+    document.getElementById('newStyleName').value = '';
+    document.getElementById('newStyleSize').value = '';
+    document.getElementById('newStyleColor').value = '#000000';
+    document.getElementById('newStyleBgColor').value = '#ffffff';
+    renderEditorStyles();
+    initTinyMCE();
+  });
+});
+
+window.deleteEditorStyle = function(index) {
+  if (confirm('کیا واقعی آپ اس سٹائل کو ڈیلیٹ کرنا چاہتے ہیں؟')) {
+    siteData.customEditorStyles.splice(index, 1);
+    saveDataToServer(() => {
+      showStatus('سٹائل ڈیلیٹ کر دیا گیا۔', 'success', 'styleStatusMessage');
+      renderEditorStyles();
+      initTinyMCE();
     });
   }
 };
