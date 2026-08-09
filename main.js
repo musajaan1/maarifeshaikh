@@ -735,13 +735,46 @@ function initApp() {
 
   function setupArticleSidebar(tocHtml, timelineHtml) {
     const sidebar = document.getElementById("articleSidebar");
-    const tocList = document.getElementById("tocList");
-    const timelineList = document.getElementById("timelineList");
-    const sidebarTabs = document.getElementById("sidebarTabs");
-    const tocTitle = document.getElementById("tocTitle");
-    const timelineTitle = document.getElementById("timelineTitle");
-    const tabToc = document.getElementById("tabToc");
-    const tabTimeline = document.getElementById("tabTimeline");
+    let tocList = document.getElementById("tocList");
+    let timelineList = document.getElementById("timelineList");
+    let sidebarTabs = document.getElementById("sidebarTabs");
+    let tocTitle = document.getElementById("tocTitle");
+    let timelineTitle = document.getElementById("timelineTitle");
+    let tabToc = document.getElementById("tabToc");
+    let tabTimeline = document.getElementById("tabTimeline");
+
+    const tocMobileToggle = document.getElementById("tocMobileToggle");
+    const tocContent = document.getElementById("tocContent");
+
+    if (tocMobileToggle && tocContent) {
+      // Remove old listeners to prevent duplicates if function runs again
+      const newToggle = tocMobileToggle.cloneNode(true);
+      tocMobileToggle.parentNode.replaceChild(newToggle, tocMobileToggle);
+      
+      const newContent = tocContent.cloneNode(true);
+      tocContent.parentNode.replaceChild(newContent, tocContent);
+      
+      newToggle.onclick = () => {
+        newToggle.classList.toggle('open');
+        newContent.classList.toggle('show');
+      };
+      
+      newContent.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A' && window.innerWidth <= 900) {
+          newToggle.classList.remove('open');
+          newContent.classList.remove('show');
+        }
+      });
+      
+      // Update references
+      sidebarTabs = document.getElementById("sidebarTabs");
+      tocTitle = document.getElementById("tocTitle");
+      timelineTitle = document.getElementById("timelineTitle");
+      tabToc = document.getElementById("tabToc");
+      tabTimeline = document.getElementById("tabTimeline");
+      tocList = document.getElementById("tocList");
+      timelineList = document.getElementById("timelineList");
+    }
 
     if (!tocHtml && !timelineHtml) {
       sidebar.style.display = 'none';

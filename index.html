@@ -219,16 +219,22 @@
       <div class="article-layout">
         <aside class="article-sidebar" id="articleSidebar" style="display: none;">
           <div class="toc-container">
-            <div class="sidebar-tabs" id="sidebarTabs" style="display: none;">
-              <button class="sidebar-tab active" data-target="tocList" id="tabToc">عنوانات</button>
-              <button class="sidebar-tab" data-target="timelineList" id="tabTimeline">تاریخیں</button>
+            <div class="toc-mobile-toggle" id="tocMobileToggle">
+              <span><i class="fas fa-list-ul"></i> فہرست عنوانات</span>
+              <i class="fas fa-chevron-down"></i>
             </div>
-            
-            <h3 class="toc-title" id="tocTitle"><i class="fas fa-list-ul"></i> فہرستِ عنوانات</h3>
-            <ul class="toc-list" id="tocList"></ul>
-            
-            <h3 class="toc-title" id="timelineTitle" style="display: none;"><i class="fas fa-calendar-alt"></i> اہم تاریخیں</h3>
-            <ul class="toc-list" id="timelineList" style="display: none;"></ul>
+            <div class="toc-content" id="tocContent">
+              <div class="sidebar-tabs" id="sidebarTabs" style="display: none;">
+                <button class="sidebar-tab active" data-target="tocList" id="tabToc">عنوانات</button>
+                <button class="sidebar-tab" data-target="timelineList" id="tabTimeline">تاریخیں</button>
+              </div>
+              
+              <h3 class="toc-title" id="tocTitle"><i class="fas fa-list-ul"></i> فہرستِ عنوانات</h3>
+              <ul class="toc-list" id="tocList"></ul>
+              
+              <h3 class="toc-title" id="timelineTitle" style="display: none;"><i class="fas fa-calendar-alt"></i> اہم تاریخیں</h3>
+              <ul class="toc-list" id="timelineList" style="display: none;"></ul>
+            </div>
           </div>
         </aside>
         
