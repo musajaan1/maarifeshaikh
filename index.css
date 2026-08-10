@@ -851,6 +851,15 @@ ul {
   color: var(--gold);
 }
 
+.bc-sep {
+  color: #ccc;
+  font-size: 0.75rem;
+  margin: 0 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .page-header {
   display: flex;
   flex-direction: column;

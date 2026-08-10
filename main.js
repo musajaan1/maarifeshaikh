@@ -455,7 +455,7 @@ function initApp() {
     currentCategory = siteData.categories[categoryId];
     
     const breadcrumb = document.getElementById("catBreadcrumb");
-    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> / ${currentCategory.title}`;
+    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentCategory.title}`;
     
     const title = document.getElementById("catTitle");
     title.textContent = currentCategory.title;
@@ -553,7 +553,7 @@ function initApp() {
     });
 
     const breadcrumb = document.getElementById("secBreadcrumb");
-    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> / <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> / ${currentSection.title}`;
+    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
     
     const title = document.getElementById("secTitle");
     title.textContent = currentSection.title;
@@ -843,7 +843,7 @@ function initApp() {
     });
 
     const breadcrumb = document.getElementById("singleBreadcrumb");
-    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> / <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> / <a href="#" onclick="window.renderSectionHandler('${categoryId}', '${sectionId}'); return false;">${currentSection.title}</a> / ${item.title}`;
+    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" onclick="window.renderSectionHandler('${categoryId}', '${sectionId}'); return false;">${currentSection.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${item.title}`;
     
     document.getElementById("singleTitle").textContent = item.title;
     
@@ -953,7 +953,7 @@ function initApp() {
     });
 
     const breadcrumb = document.getElementById("singleBreadcrumb");
-    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> / صفحہ اول کا مضمون`;
+    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> صفحہ اول کا مضمون`;
     
     document.getElementById("singleTitle").textContent = item.title;
     
