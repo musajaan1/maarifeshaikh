@@ -1215,8 +1215,12 @@ function initAdmin() {
     articles.forEach((art, index) => {
       const div = document.createElement('div');
       div.className = 'manage-item';
+      div.dataset.id = index;
       div.innerHTML = `
-      <div class="manage-item-info">
+        <div style="display: flex; align-items: center; gap: 1rem; cursor: grab;" class="sort-handle">
+          <i class="fas fa-grip-lines" style="color: #aaa; font-size: 1.2rem;"></i>
+        </div>
+      <div class="manage-item-info" style="flex: 1;">
         <strong>${art.title} ${art.status === 'draft' ? '<span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-right: 10px;">مسودہ (Draft)</span>' : ''}</strong>
         <span style="font-size: 0.9em; color: #555; margin-right: 10px;">(${art.date || 'کوئی تاریخ نہیں'})</span>
       </div>
@@ -1227,6 +1231,21 @@ function initAdmin() {
       `;
       list.appendChild(div);
     });
+    
+    if (typeof Sortable !== 'undefined') {
+      new Sortable(list, {
+        handle: '.sort-handle',
+        animation: 150,
+        onEnd: function (evt) {
+          if (evt.oldIndex === evt.newIndex) return;
+          const arr = siteData.homeArticles || [];
+          arr.splice(evt.newIndex, 0, arr.splice(evt.oldIndex, 1)[0]);
+          saveDataToServer(() => {
+            renderHomeArticlesList();
+          });
+        }
+      });
+    }
   }
 
   // Handle New Article Button
@@ -1408,8 +1427,12 @@ function renderCategoriesList() {
     const div = document.createElement('div');
     div.className = 'manage-item';
     div.id = `cat-row-${catId}`;
+    div.dataset.id = catId;
     div.innerHTML = `
-      <div class="manage-item-info">
+      <div style="display: flex; align-items: center; gap: 1rem; cursor: grab;" class="sort-handle">
+        <i class="fas fa-grip-lines" style="color: #aaa; font-size: 1.2rem;"></i>
+      </div>
+      <div class="manage-item-info" style="flex: 1;">
         <strong>${cat.title}</strong>
         <span>قسم: ${typeNames[cat.type] || cat.type} | سیکشنز: ${cat.sections.length}</span>
       </div>
@@ -1424,6 +1447,26 @@ function renderCategoriesList() {
     `;
     list.appendChild(div);
   });
+
+  if (typeof Sortable !== 'undefined') {
+    new Sortable(list, {
+      handle: '.sort-handle',
+      animation: 150,
+      onEnd: function (evt) {
+        if (evt.oldIndex === evt.newIndex) return;
+        const keys = Object.keys(siteData.categories);
+        const movedKey = keys.splice(evt.oldIndex, 1)[0];
+        keys.splice(evt.newIndex, 0, movedKey);
+        const newObj = {};
+        keys.forEach(k => { newObj[k] = siteData.categories[k]; });
+        siteData.categories = newObj;
+        saveDataToServer(() => {
+          updateCategoryDropdowns();
+          renderCategoriesList();
+        });
+      }
+    });
+  }
 }
 
 window.editCategory = function(catId) {
@@ -1525,8 +1568,12 @@ function renderSectionsList() {
   sections.forEach(sec => {
     const div = document.createElement('div');
     div.className = 'manage-item';
+    div.dataset.id = sec.id;
     div.innerHTML = `
-      <div class="manage-item-info">
+      <div style="display: flex; align-items: center; gap: 1rem; cursor: grab;" class="sort-handle">
+        <i class="fas fa-grip-lines" style="color: #aaa; font-size: 1.2rem;"></i>
+      </div>
+      <div class="manage-item-info" style="flex: 1;">
         <strong>${sec.title}</strong>
       </div>
       <div style="display: flex; gap: 0.5rem;">
@@ -1540,6 +1587,20 @@ function renderSectionsList() {
     `;
     list.appendChild(div);
   });
+
+  if (typeof Sortable !== 'undefined') {
+    new Sortable(list, {
+      handle: '.sort-handle',
+      animation: 150,
+      onEnd: function (evt) {
+        if (evt.oldIndex === evt.newIndex) return;
+        const catId = document.getElementById('manageSecCategorySelect').value;
+        const arr = siteData.categories[catId].sections;
+        arr.splice(evt.newIndex, 0, arr.splice(evt.oldIndex, 1)[0]);
+        saveDataToServer();
+      }
+    });
+  }
 }
 
 window.editSection = function(catId, secId) {
@@ -1642,8 +1703,18 @@ function renderManageList() {
   items.forEach(item => {
     const div = document.createElement('div');
     div.className = 'manage-item';
+    div.dataset.id = item.id;
+    let handleHtml = '';
+    if (secId) { // Only sortable if a specific section is selected
+      handleHtml = `
+        <div style="display: flex; align-items: center; gap: 1rem; cursor: grab;" class="sort-handle">
+          <i class="fas fa-grip-lines" style="color: #aaa; font-size: 1.2rem;"></i>
+        </div>
+      `;
+    }
     div.innerHTML = `
-      <div class="manage-item-info">
+      ${handleHtml}
+      <div class="manage-item-info" style="flex: 1;">
         <strong>${item.title} ${item.status === 'draft' ? '<span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-right: 10px;">مسودہ (Draft)</span>' : ''}</strong>
         <span>${item.date ? item.date + ' | ' : ''} ${item.author || ''} | <i class="fas fa-eye"></i> ${item.views || 0} ویوز</span>
       </div>
@@ -1658,6 +1729,23 @@ function renderManageList() {
     `;
     list.appendChild(div);
   });
+
+  if (typeof Sortable !== 'undefined' && secId) {
+    new Sortable(list, {
+      handle: '.sort-handle',
+      animation: 150,
+      onEnd: function (evt) {
+        if (evt.oldIndex === evt.newIndex) return;
+        const catId = document.getElementById('manageCatSelect').value;
+        const dataKey = `${catId}_${secId}`;
+        const arr = siteData.content[dataKey];
+        if (arr) {
+          arr.splice(evt.newIndex, 0, arr.splice(evt.oldIndex, 1)[0]);
+          saveDataToServer();
+        }
+      }
+    });
+  }
 }
 
 window.editItem = function(dataKey, itemId) {
