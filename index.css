@@ -832,11 +832,19 @@ ul {
 .breadcrumb {
   color: #666;
   font-size: 1rem;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.breadcrumb::-webkit-scrollbar {
+  display: none;
 }
 
 .breadcrumb a {
   color: var(--teal);
   font-weight: 500;
+  text-decoration: none;
 }
 
 .breadcrumb a:hover {
@@ -876,6 +884,19 @@ ul {
   margin: -1rem -1.5rem 1rem -1.5rem;
   border: 1px solid rgba(255,255,255,0.5);
   border-top: none;
+}
+
+@media (max-width: 768px) {
+  .sticky-top-nav {
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+  }
+  .sticky-top-nav .breadcrumb {
+    width: 100%;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
 }
 
 /* --- Section Grid / Series Groups --- */
