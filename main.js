@@ -189,6 +189,47 @@ function populateFooter() {
 }
 
 function initApp() {
+
+  let isPopState = false;
+  window.addEventListener('popstate', () => {
+    isPopState = true;
+    parseUrl();
+  });
+
+  function updateUrl(url) {
+    if (isPopState) {
+      isPopState = false;
+    } else {
+      history.pushState(null, '', url);
+    }
+  }
+
+  window.parseUrl = function() {
+    const params = new URLSearchParams(window.location.search);
+    const homeId = params.get('home');
+    const articleId = params.get('article');
+    const c = params.get('c');
+    const s = params.get('s');
+
+    if (homeId) {
+      const homeArticles = (siteData.homeArticles || []).filter(a => a.status !== 'draft');
+      const idx = homeArticles.findIndex(a => String(a.id) === homeId);
+      if (idx !== -1) {
+        window.renderHomeSingleItem(idx);
+        return;
+      }
+    } else if (articleId && c && s) {
+      window.renderSingleItem(c, s, articleId);
+      return;
+    } else if (c && s) {
+      renderSection(c, s);
+      return;
+    } else if (c) {
+      renderCategory(c);
+      return;
+    }
+    renderHome();
+  };
   // Mobile Menu Toggle (in header, always visible)
   const menuToggle = document.getElementById("menuToggle");
   const navMenu = document.getElementById("navMenu");
