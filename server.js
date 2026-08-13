@@ -321,13 +321,69 @@ app.post('/api/delete-file', (req, res) => {
 });
 
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   if (req.url.startsWith('/api')) {
     return res.status(404).json({ error: 'Not found' });
   }
   if (req.url.startsWith('/admin')) {
     return res.sendFile(path.join(__dirname, 'admin', 'index.html'));
   }
+
+  const homeId = req.query.home;
+  const articleId = req.query.article;
+  
+  if (homeId || articleId) {
+    try {
+      const doc = await db.collection('siteData').doc('main').get();
+      if (doc.exists) {
+        const siteData = doc.data();
+        let item = null;
+        
+        if (homeId) {
+          const homeArticles = (siteData.homeArticles || []).filter(a => a.status !== 'draft');
+          item = homeArticles.find(a => String(a.id) === String(homeId));
+        } else if (articleId) {
+          if (siteData.content) {
+            for (const key in siteData.content) {
+              const found = siteData.content[key].find(a => String(a.id) === String(articleId) && a.status !== 'draft');
+              if (found) {
+                item = found;
+                break;
+              }
+            }
+          }
+        }
+        
+        if (item) {
+          const title = item.seoTitle || item.title || 'معارف شیخ';
+          let desc = item.seoDesc || item.excerpt || 'معارف شیخ';
+          desc = desc.replace(/<[^>]+>/g, '').substring(0, 200);
+          
+          let image = item.mediaUrl || 'https://maarifeshaikh.com/admin/assets/images/logo.png';
+          
+          let html = require('fs').readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+          
+          const metaTags = `
+            <meta property="og:title" content="${title.replace(/"/g, '&quot;')}" />
+            <meta property="og:description" content="${desc.replace(/"/g, '&quot;')}" />
+            <meta property="og:image" content="${image}" />
+            <meta property="og:type" content="article" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content="${title.replace(/"/g, '&quot;')}" />
+            <meta name="twitter:description" content="${desc.replace(/"/g, '&quot;')}" />
+            <meta name="twitter:image" content="${image}" />
+            <title>${title.replace(/</g, '&lt;')} - معارف شیخ</title>
+          `;
+          
+          html = html.replace('</head>', metaTags + '\n</head>');
+          return res.send(html);
+        }
+      }
+    } catch (e) {
+      console.error('Error fetching SEO data:', e);
+    }
+  }
+
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 

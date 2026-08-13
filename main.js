@@ -1382,9 +1382,9 @@ function initApp() {
 
   window.closeInlineSearch = closeInlineSearch;
 
-  // Initial render
-  renderHome();
-}
+    // Initial render
+    parseUrl();
+  }
 // --- In-Page Search Logic ---
 let markInstance = null;
 let currentMatchIndex = -1;
