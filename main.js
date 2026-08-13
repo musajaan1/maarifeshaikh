@@ -346,6 +346,7 @@ function initApp() {
   let currentHomeArticleIndex = 0;
 
   function renderHome() {
+    updateUrl('/');
     window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(homeTemplate.content.cloneNode(true));
@@ -582,6 +583,8 @@ function initApp() {
   }
 
   function renderCategory(categoryId) {
+    const catTitle = siteData.categories[categoryId]?.title || categoryId;
+    updateUrl('/' + encodeURIComponent(generateSlug(catTitle)));
     window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(categoryTemplate.content.cloneNode(true));
@@ -674,6 +677,10 @@ function initApp() {
   }
 
   function renderSection(categoryId, sectionId) {
+    const catTitle = siteData.categories[categoryId]?.title || categoryId;
+    const sec = siteData.categories[categoryId]?.sections?.find(s => s.id === sectionId);
+    const secTitle = sec ? sec.title : sectionId;
+    updateUrl('/' + encodeURIComponent(generateSlug(catTitle)) + '/' + encodeURIComponent(generateSlug(secTitle)));
     window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(sectionTemplate.content.cloneNode(true));
@@ -961,6 +968,13 @@ function initApp() {
   }
 
   window.renderSingleItem = function(categoryId, sectionId, itemId) {
+    const catTitle = siteData.categories[categoryId]?.title || categoryId;
+    const sec = siteData.categories[categoryId]?.sections?.find(s => s.id === sectionId);
+    const secTitle = sec ? sec.title : sectionId;
+    const _dataKey = categoryId + '_' + sectionId;
+    const _item = (siteData.content[_dataKey] || []).find(i => i.id === itemId);
+    const itemTitle = _item ? _item.title : itemId;
+    updateUrl('/' + encodeURIComponent(generateSlug(catTitle)) + '/' + encodeURIComponent(generateSlug(secTitle)) + '/' + encodeURIComponent(generateSlug(itemTitle)));
     window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(singleItemTemplate.content.cloneNode(true));
@@ -1074,6 +1088,9 @@ function initApp() {
   }
 
   window.renderHomeSingleItem = function(index = 0) {
+    const _homeArticles = (siteData.homeArticles || []).filter(a => a.status !== 'draft');
+    const hItem = _homeArticles[index];
+    if (hItem) updateUrl('/home/' + encodeURIComponent(generateSlug(hItem.title)));
     window.scrollTo(0, 0);
     appRoot.innerHTML = "";
     appRoot.appendChild(singleItemTemplate.content.cloneNode(true));
