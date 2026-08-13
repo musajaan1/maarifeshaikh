@@ -210,12 +210,26 @@ function initTinyMCE() {
     height: 400,
     menubar: false,
     plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
-    toolbar: 'undo redo | styles fontfamily fontsize forecolor backcolor | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table | removeformat | help',
+    toolbar: 'undo redo | fixparagraphs | styles fontfamily fontsize forecolor backcolor | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table | removeformat | help',
     style_formats: buildStyleFormats(),
     font_family_formats: fontFormats,
     font_size_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt',
     content_style: contentStyle,
     setup: function(editor) {
+      editor.ui.registry.addButton('fixparagraphs', {
+        icon: 'paragraph',
+        tooltip: 'پیراگراف درست کریں (اگر الائنمنٹ کا مسئلہ ہو)',
+        onAction: function () {
+          var content = editor.getContent();
+          content = content.replace(/<br\s*\/?>/gi, '</p><p>');
+          editor.setContent(content);
+        }
+      });
+
+      editor.on('PastePreProcess', function(e) {
+        e.content = e.content.replace(/<br\s*\/?>/gi, '</p><p>');
+      });
+
       editor.on('change', function() {
         tinymce.triggerSave();
       });
