@@ -104,12 +104,7 @@ main.main-content {
   opacity: 1;
   z-index: 2;
 }
-.banner-slide img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 8px;
-}
+.banner-slide 
 
 .banner-placeholder span {
   color: var(--gold);
@@ -1413,4 +1408,12 @@ mark.current-match {
   color: white !important;
   border-radius: 2px;
   padding: 0 2px;
+}
+ 
+ 
+
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
 }
