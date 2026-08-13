@@ -28,7 +28,78 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch('/api/data')
     .then(res => res.json())
     .then(data => {
+      let dataRepaired = false;
+      if (data) {
+        // Clean up content IDs
+        if (data.content) {
+          Object.keys(data.content).forEach(key => {
+            const unique = [];
+            const seen = new Set();
+            data.content[key].forEach(item => {
+              if (item && item.id) {
+                const idStr = String(item.id);
+                if (item.id !== idStr) { item.id = idStr; dataRepaired = true; }
+                if (!seen.has(idStr)) {
+                  seen.add(idStr);
+                  unique.push(item);
+                } else {
+                  dataRepaired = true;
+                }
+              }
+            });
+            data.content[key] = unique;
+          });
+        }
+        // Clean up home articles IDs
+        if (data.homeArticles) {
+          const unique = [];
+          const seen = new Set();
+          data.homeArticles.forEach(item => {
+            if (item && item.id) {
+              const idStr = String(item.id);
+              if (item.id !== idStr) { item.id = idStr; dataRepaired = true; }
+              if (!seen.has(idStr)) {
+                seen.add(idStr);
+                unique.push(item);
+              } else {
+                dataRepaired = true;
+              }
+            } else if (item) {
+              unique.push(item);
+            }
+          });
+          data.homeArticles = unique;
+        }
+        // Clean up category section IDs
+        if (data.categories) {
+          Object.keys(data.categories).forEach(catId => {
+            const cat = data.categories[catId];
+            if (cat && cat.sections) {
+              const unique = [];
+              const seen = new Set();
+              cat.sections.forEach(sec => {
+                if (sec && sec.id) {
+                  const idStr = String(sec.id);
+                  if (sec.id !== idStr) { sec.id = idStr; dataRepaired = true; }
+                  if (!seen.has(idStr)) {
+                    seen.add(idStr);
+                    unique.push(sec);
+                  } else {
+                    dataRepaired = true;
+                  }
+                }
+              });
+              cat.sections = unique;
+            }
+          });
+        }
+      }
+      
       siteData = data;
+      if (dataRepaired && typeof saveDataToServer === 'function') {
+         saveDataToServer(); // Auto-repair database
+      }
+
       document.getElementById('loadingMessage').style.display = 'none';
       
       // Default to Dashboard
