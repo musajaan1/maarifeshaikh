@@ -166,7 +166,43 @@ app.get('/api/data', async (req, res) => {
 
 // API to POST (save) data
 app.post('/api/data', requireAuth, async (req, res) => {
-  const newData = req.body;
+  let newData = req.body;
+  if (newData && newData.content) {
+    Object.keys(newData.content).forEach(key => {
+      const unique = [];
+      const seen = new Set();
+      newData.content[key].forEach(item => {
+        if (item && item.id) {
+          const idStr = String(item.id);
+          item.id = idStr;
+          if (!seen.has(idStr)) {
+            seen.add(idStr);
+            unique.push(item);
+          }
+        }
+      });
+      newData.content[key] = unique;
+    });
+  }
+  if (newData && newData.homeArticles) {
+    const uniqueHome = [];
+    const seenHome = new Set();
+    newData.homeArticles.forEach(item => {
+      if (item && item.id) {
+        const idStr = String(item.id);
+        item.id = idStr;
+        if (!seenHome.has(idStr)) {
+          seenHome.add(idStr);
+          uniqueHome.push(item);
+        }
+      } else if (item && !item.id) {
+        // legacy home articles might not have id, keep them but don't deduplicate by id
+        uniqueHome.push(item);
+      }
+    });
+    newData.homeArticles = uniqueHome;
+  }
+  
   try {
     await db.collection('siteData').doc('main').set(newData);
     res.json({ success: true, message: 'Data saved successfully' });
