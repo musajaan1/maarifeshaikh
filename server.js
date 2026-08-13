@@ -1,5 +1,14 @@
 const express = require('express');
 const path = require('path');
+
+function generateSlug(text) {
+  if (!text) return '';
+  return text.trim()
+    .replace(/[\s_]+/g, '-')
+    .replace(/[^\w\-\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 const cors = require('cors');
 const multer = require('multer');
 
@@ -332,7 +341,19 @@ app.use(async (req, res, next) => {
   const homeId = req.query.home;
   const articleId = req.query.article;
   
-  if (homeId || articleId) {
+  const decodedPath = decodeURIComponent(req.path);
+  const pathParts = decodedPath.split('/').filter(Boolean);
+  
+  let targetHomeArticleSlug = null;
+  let targetArticleSlug = null;
+  
+  if (pathParts.length === 2 && pathParts[0] === 'home') {
+    targetHomeArticleSlug = pathParts[1];
+  } else if (pathParts.length === 3) {
+    targetArticleSlug = pathParts[2];
+  }
+
+  if (homeId || articleId || targetHomeArticleSlug || targetArticleSlug) {
     try {
       const doc = await db.collection('siteData').doc('main').get();
       if (doc.exists) {
@@ -346,6 +367,19 @@ app.use(async (req, res, next) => {
           if (siteData.content) {
             for (const key in siteData.content) {
               const found = siteData.content[key].find(a => String(a.id) === String(articleId) && a.status !== 'draft');
+              if (found) {
+                item = found;
+                break;
+              }
+            }
+          }
+        } else if (targetHomeArticleSlug) {
+          const homeArticles = (siteData.homeArticles || []).filter(a => a.status !== 'draft');
+          item = homeArticles.find(a => generateSlug(a.title) === targetHomeArticleSlug);
+        } else if (targetArticleSlug) {
+          if (siteData.content) {
+            for (const key in siteData.content) {
+              const found = siteData.content[key].find(a => generateSlug(a.title) === targetArticleSlug && a.status !== 'draft');
               if (found) {
                 item = found;
                 break;

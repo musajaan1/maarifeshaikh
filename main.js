@@ -204,13 +204,14 @@ function initApp() {
     }
   }
 
-  window.parseUrl = function() {
+  window.parseUrl = function(push = false) {
     const params = new URLSearchParams(window.location.search);
     const homeId = params.get('home');
     const articleId = params.get('article');
     const c = params.get('c');
     const s = params.get('s');
 
+    // Fallback for old query param links
     if (homeId) {
       const homeArticles = (siteData.homeArticles || []).filter(a => a.status !== 'draft');
       const idx = homeArticles.findIndex(a => String(a.id) === homeId);
@@ -228,6 +229,98 @@ function initApp() {
       renderCategory(c);
       return;
     }
+
+    // New Slug-based routing
+    const decodedPath = decodeURIComponent(window.location.pathname);
+    const pathParts = decodedPath.split('/').filter(Boolean);
+
+    if (pathParts.length === 2 && pathParts[0] === 'home') {
+       const homeSlug = pathParts[1];
+       const homeArticles = (siteData.homeArticles || []).filter(a => a.status !== 'draft');
+       const idx = homeArticles.findIndex(a => generateSlug(a.title) === homeSlug);
+       if (idx !== -1) {
+         window.renderHomeSingleItem(idx);
+         return;
+       }
+    } else if (pathParts.length === 3) {
+       const catSlug = pathParts[0];
+       const secSlug = pathParts[1];
+       const articleSlug = pathParts[2];
+       
+       let foundCatId = null;
+       let foundSecId = null;
+       let foundArticleId = null;
+
+       if (siteData.categories) {
+         for (const catId in siteData.categories) {
+           const cat = siteData.categories[catId];
+           if (generateSlug(cat.title) === catSlug) {
+             foundCatId = catId;
+             if (cat.sections) {
+               const sec = cat.sections.find(s => generateSlug(s.title) === secSlug);
+               if (sec) {
+                 foundSecId = sec.id;
+               }
+             }
+             break;
+           }
+         }
+       }
+       
+       if (foundCatId && foundSecId) {
+         const dataKey = foundCatId + '_' + foundSecId;
+         const items = (siteData.content[dataKey] || []).filter(a => a.status !== 'draft');
+         const item = items.find(a => generateSlug(a.title) === articleSlug);
+         if (item) foundArticleId = item.id;
+       }
+
+       if (foundCatId && foundSecId && foundArticleId) {
+         window.renderSingleItem(foundCatId, foundSecId, foundArticleId);
+         return;
+       }
+    } else if (pathParts.length === 2) {
+       const catSlug = pathParts[0];
+       const secSlug = pathParts[1];
+       let foundCatId = null;
+       let foundSecId = null;
+
+       if (siteData.categories) {
+         for (const catId in siteData.categories) {
+           const cat = siteData.categories[catId];
+           if (generateSlug(cat.title) === catSlug) {
+             foundCatId = catId;
+             if (cat.sections) {
+               const sec = cat.sections.find(s => generateSlug(s.title) === secSlug);
+               if (sec) {
+                 foundSecId = sec.id;
+               }
+             }
+             break;
+           }
+         }
+       }
+       if (foundCatId && foundSecId) {
+         renderSection(foundCatId, foundSecId);
+         return;
+       }
+    } else if (pathParts.length === 1) {
+       const catSlug = pathParts[0];
+       let foundCatId = null;
+       if (siteData.categories) {
+         for (const catId in siteData.categories) {
+           const cat = siteData.categories[catId];
+           if (generateSlug(cat.title) === catSlug) {
+             foundCatId = catId;
+             break;
+           }
+         }
+       }
+       if (foundCatId) {
+         renderCategory(foundCatId);
+         return;
+       }
+    }
+
     renderHome();
   };
   // Mobile Menu Toggle (in header, always visible)
@@ -1535,4 +1628,14 @@ function scrollToMatch(index) {
       block: 'center'
     });
   }
+}
+
+
+function generateSlug(text) {
+  if (!text) return '';
+  return text.trim()
+    .replace(/[\s_]+/g, '-')
+    .replace(/[^\w\-\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
