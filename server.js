@@ -336,7 +336,7 @@ app.get('/sitemap.xml', async (req, res) => {
     const doc = await db.collection('siteData').doc('main').get();
     if (!doc.exists) return res.status(404).send('Not found');
     const siteData = doc.data();
-    const baseUrl = 'https://maarifeshaikh.com';
+    const baseUrl = 'https://' + req.get('host');
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
@@ -447,7 +447,7 @@ app.use(async (req, res, next) => {
           let desc = item.seoDesc || item.excerpt || 'معارف شیخ';
           desc = desc.replace(/<[^>]+>/g, '').substring(0, 200);
           
-          let image = item.mediaUrl || 'https://maarifeshaikh.com/admin/assets/images/logo.png';
+          let image = item.mediaUrl || ('https://' + req.get('host') + '/admin/assets/images/logo.png');
           
           let html = require('fs').readFileSync(path.join(__dirname, 'index.html'), 'utf8');
           
