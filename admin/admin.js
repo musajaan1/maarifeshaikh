@@ -287,7 +287,7 @@ function initAdmin() {
       if (isEditing) {
          const oldDataKey = `${editCatId}_${editSecId}`;
          if (siteData.content[oldDataKey]) {
-             oldItem = siteData.content[oldDataKey].find(i => i.id === editItemId);
+             oldItem = siteData.content[oldDataKey].find(i => i.id == editItemId);
              if (oldItem) {
                  newItem.views = oldItem.views || 0;
                  if (!fileUrl && oldItem.mediaUrl) {
@@ -310,14 +310,14 @@ function initAdmin() {
       }
       
       if (isEditing) {
-         if (editCatId !== catId || editSecId !== secId) {
+         if (editCatId != catId || editSecId != secId) {
              const oldDataKey = `${editCatId}_${editSecId}`;
              if (siteData.content[oldDataKey]) {
-                 siteData.content[oldDataKey] = siteData.content[oldDataKey].filter(i => i.id !== editItemId);
+                 siteData.content[oldDataKey] = siteData.content[oldDataKey].filter(i => i.id != editItemId);
              }
              siteData.content[dataKey].unshift(newItem);
          } else {
-             const index = siteData.content[dataKey].findIndex(i => i.id === editItemId);
+             const index = siteData.content[dataKey].findIndex(i => i.id == editItemId);
              if (index !== -1) {
                  siteData.content[dataKey][index] = newItem;
              } else {
@@ -1604,7 +1604,7 @@ function renderSectionsList() {
 }
 
 window.editSection = function(catId, secId) {
-  const sec = siteData.categories[catId].sections.find(s => s.id === secId);
+  const sec = siteData.categories[catId].sections.find(s => s.id == secId);
   if (!sec) return;
   
   const seriesData = extractSeriesAndSubtitle(sec.title);
@@ -1640,7 +1640,7 @@ document.getElementById('saveEditSectionBtn').addEventListener('click', () => {
     return;
   }
 
-  const sec = siteData.categories[catId].sections.find(s => s.id === secId);
+  const sec = siteData.categories[catId].sections.find(s => s.id == secId);
   if (sec) {
     sec.title = newName;
     const seriesData = extractSeriesAndSubtitle(newName);
@@ -1662,7 +1662,7 @@ document.getElementById('saveEditSectionBtn').addEventListener('click', () => {
 
 window.deleteSection = function(catId, secId) {
   if (confirm('کیا آپ واقعی یہ سیکشن اور اس کا تمام مواد حذف کرنا چاہتے ہیں؟')) {
-    siteData.categories[catId].sections = siteData.categories[catId].sections.filter(s => s.id !== secId);
+    siteData.categories[catId].sections = siteData.categories[catId].sections.filter(s => s.id != secId);
     saveDataToServer(() => {
       showStatus('سیکشن حذف کر دیا گیا!', 'success');
       renderSectionsList();
@@ -1751,7 +1751,7 @@ function renderManageList() {
 window.editItem = function(dataKey, itemId) {
   const items = siteData.content[dataKey];
   if (!items) return;
-  const item = items.find(i => i.id === itemId);
+  const item = items.find(i => i.id == itemId);
   if (!item) return;
 
   const [catId, secId] = dataKey.split('_');
@@ -1812,7 +1812,7 @@ window.editItem = function(dataKey, itemId) {
 
 window.deleteItem = function(dataKey, itemId) {
   if (confirm('کیا آپ واقعی یہ مواد حذف کرنا چاہتے ہیں؟')) {
-    siteData.content[dataKey] = siteData.content[dataKey].filter(i => i.id !== itemId);
+    siteData.content[dataKey] = siteData.content[dataKey].filter(i => i.id != itemId);
     saveDataToServer(() => {
       renderManageList();
     });
@@ -2158,7 +2158,7 @@ function renderMessages() {
 
 window.deleteMessage = function(msgId) {
   if (confirm('کیا آپ واقعی یہ پیغام ڈیلیٹ کرنا چاہتے ہیں؟')) {
-    siteData.messages = siteData.messages.filter(m => m.id !== msgId);
+    siteData.messages = siteData.messages.filter(m => m.id != msgId);
     saveDataToServer(() => {
       showStatus('پیغام ڈیلیٹ ہو گیا!', 'success');
       renderMessages();
