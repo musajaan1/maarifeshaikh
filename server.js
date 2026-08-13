@@ -410,6 +410,23 @@ app.use(async (req, res, next) => {
           `;
           
           html = html.replace('</head>', metaTags + '\n</head>');
+          
+          const articleHtml = `
+            <div class="page-container" style="max-width: 1300px;">
+              <div class="article-layout">
+                <div class="article-main">
+                  <div class="page-header">
+                    <h1 class="page-title">${item.title || ''}</h1>
+                  </div>
+                  <div class="content-body">
+                    ${item.content || ''}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          html = html.replace('<main class="main-content" id="appRoot">', () => '<main class="main-content" id="appRoot">\n' + articleHtml);
+          
           return res.send(html);
         }
       }
