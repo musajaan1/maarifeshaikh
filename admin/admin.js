@@ -1229,6 +1229,9 @@ function initAdmin() {
       document.getElementById('homeSeoDesc').value = art.seoDesc || '';
       document.getElementById('homeSeoKeywords').value = art.seoKeywords || '';
     }
+    if (document.getElementById('homeImageUrl')) {
+      document.getElementById('homeImageUrl').value = art.mediaUrl || '';
+    }
     
     if (art.mediaUrl) {
       document.getElementById('currentHomeImage').innerHTML = `
@@ -1361,8 +1364,11 @@ function initAdmin() {
         }
         
         const fileInput = document.getElementById('homeImageFile');
+        const urlInput = document.getElementById('homeImageUrl');
         if (fileInput.files.length > 0) {
           fileUrl = await uploadFile(fileInput.files[0]);
+        } else if (urlInput && urlInput.value.trim()) {
+          fileUrl = urlInput.value.trim();
         }
 
         const articleData = {
@@ -1388,6 +1394,7 @@ function initAdmin() {
         saveDataToServer(() => {
           showStatus(isEditing ? 'ہوم پیج مضمون اپڈیٹ کر لیا گیا!' : 'نیا ہوم پیج مضمون شامل کر دیا گیا!', 'success', 'homeStatusMessage');
           fileInput.value = '';
+          if (document.getElementById('homeImageUrl')) document.getElementById('homeImageUrl').value = '';
           renderHomeArticlesList();
           loadHomeArticleData(isEditing ? editIndex : 0);
         });
