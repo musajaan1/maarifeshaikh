@@ -330,6 +330,60 @@ app.post('/api/delete-file', (req, res) => {
 });
 
 
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    if (!db) return res.status(500).send('DB not initialized');
+    const doc = await db.collection('siteData').doc('main').get();
+    if (!doc.exists) return res.status(404).send('Not found');
+    const siteData = doc.data();
+    const baseUrl = 'https://maarifeshaikh.com';
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    xml += `  <url>\n    <loc>${baseUrl}/</loc>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${baseUrl}/about</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.5</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${baseUrl}/contact</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.5</priority>\n  </url>\n`;
+
+    if (siteData.homeArticles) {
+      siteData.homeArticles.filter(a => a.status !== 'draft').forEach(item => {
+        const itemSlug = generateSlug(item.title);
+        xml += `  <url>\n    <loc>${baseUrl}/home/${encodeURIComponent(itemSlug)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+      });
+    }
+
+    if (siteData.categories) {
+      for (const catKey in siteData.categories) {
+        const cat = siteData.categories[catKey];
+        if (!cat) continue;
+        const catSlug = generateSlug(cat.title || catKey);
+        xml += `  <url>\n    <loc>${baseUrl}/${encodeURIComponent(catSlug)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+        
+        if (cat.sections) {
+          cat.sections.forEach(sec => {
+            const secSlug = generateSlug(sec.title || sec.id);
+            xml += `  <url>\n    <loc>${baseUrl}/${encodeURIComponent(catSlug)}/${encodeURIComponent(secSlug)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+            
+            const dataKey = catKey + '_' + sec.id;
+            if (siteData.content && siteData.content[dataKey]) {
+              siteData.content[dataKey].filter(a => a.status !== 'draft').forEach(item => {
+                const itemSlug = generateSlug(item.title || item.id);
+                xml += `  <url>\n    <loc>${baseUrl}/${encodeURIComponent(catSlug)}/${encodeURIComponent(secSlug)}/${encodeURIComponent(itemSlug)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+              });
+            }
+          });
+        }
+      }
+    }
+
+    xml += `</urlset>`;
+    res.header('Content-Type', 'application/xml');
+    res.send(xml);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error generating sitemap');
+  }
+});
+
 app.use(async (req, res, next) => {
   if (req.url.startsWith('/api')) {
     return res.status(404).json({ error: 'Not found' });
