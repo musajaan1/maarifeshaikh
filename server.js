@@ -258,6 +258,36 @@ app.post('/api/increment-view', async (req, res) => {
   }
 });
 
+app.get('/api/metrics', requireAuth, async (req, res) => {
+  try {
+    const cloudinaryUsage = await cloudinary.api.usage();
+    let firestoreSize = 0;
+    if (db) {
+      const doc = await db.collection('siteData').doc('main').get();
+      if (doc.exists) {
+        firestoreSize = Buffer.byteLength(JSON.stringify(doc.data()), 'utf8');
+      }
+    }
+    res.json({
+      success: true,
+      cloudinary: {
+        plan: cloudinaryUsage.plan,
+        storageUsage: cloudinaryUsage.storage.usage,
+        bandwidthUsage: cloudinaryUsage.bandwidth.usage,
+        creditsUsage: cloudinaryUsage.credits.usage,
+        creditsLimit: cloudinaryUsage.credits.limit,
+      },
+      firebase: {
+        firestoreSizeBytes: firestoreSize,
+        firestoreLimitBytes: 1024 * 1024 * 1024 // 1 GB limit approximation
+      }
+    });
+  } catch (error) {
+    console.error('Metrics Error:', error);
+    res.status(500).json({ error: 'Failed to fetch metrics' });
+  }
+});
+
 // API to upload files
 app.post('/api/upload', requireAuth, upload.single('file'), (req, res) => {
   if (!req.file) {

@@ -2268,7 +2268,69 @@ function renderDashboard() {
   document.getElementById('dashTotalAudios').textContent = totalAudios;
   document.getElementById('dashTotalViews').textContent = totalViews;
   document.getElementById('dashTotalMessages').textContent = totalMessages;
+
+  loadMetrics();
 }
+
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+async function loadMetrics() {
+  const loader = document.getElementById('metricsLoader');
+  const container = document.getElementById('metricsContainer');
+  
+  if (loader && container) {
+    loader.style.display = 'block';
+    container.style.display = 'none';
+  }
+
+  try {
+    const res = await fetch('/api/metrics', {
+      headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('adminToken') }
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      const cldLimitBytes = (data.cloudinary.creditsLimit || 25) * 1024 * 1024 * 1024;
+      const cldStoragePercent = ((data.cloudinary.storageUsage / cldLimitBytes) * 100).toFixed(2);
+      const cldBandwidthPercent = ((data.cloudinary.bandwidthUsage / cldLimitBytes) * 100).toFixed(2);
+      const fbStoragePercent = ((data.firebase.firestoreSizeBytes / data.firebase.firestoreLimitBytes) * 100).toFixed(4);
+
+      document.getElementById('cldStoragePercent').textContent = cldStoragePercent + '%';
+      document.getElementById('cldStorageBar').style.width = Math.min(cldStoragePercent, 100) + '%';
+      document.getElementById('cldStorageUsed').textContent = formatBytes(data.cloudinary.storageUsage) + ' استعمال';
+      
+      document.getElementById('cldBandwidthPercent').textContent = cldBandwidthPercent + '%';
+      document.getElementById('cldBandwidthBar').style.width = Math.min(cldBandwidthPercent, 100) + '%';
+      document.getElementById('cldBandwidthUsed').textContent = formatBytes(data.cloudinary.bandwidthUsage) + ' ٹرانسفر';
+
+      document.getElementById('fbStoragePercent').textContent = fbStoragePercent + '%';
+      document.getElementById('fbStorageBar').style.width = Math.min(fbStoragePercent, 100) + '%';
+      document.getElementById('fbStorageUsed').textContent = formatBytes(data.firebase.firestoreSizeBytes) + ' استعمال';
+    }
+  } catch (e) {
+    console.error('Failed to load metrics:', e);
+  } finally {
+    if (loader && container) {
+      loader.style.display = 'none';
+      container.style.display = 'grid';
+    }
+  }
+}
+
+// Hook up refresh button
+document.addEventListener('DOMContentLoaded', () => {
+  const refreshBtn = document.getElementById('refreshMetricsBtn');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', loadMetrics);
+  }
+});
 
 function renderMessages() {
   const container = document.getElementById('messagesList');

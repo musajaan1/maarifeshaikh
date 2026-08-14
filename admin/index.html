@@ -70,6 +70,69 @@
               <p id="dashTotalMessages" style="font-size: 1.5rem; font-weight: bold; color: var(--ink);">0</p>
             </div>
           </div>
+
+          <!-- Storage Metrics Section -->
+          <div style="margin-top: 2.5rem; border-top: 1px solid #eee; padding-top: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+              <h3 style="margin: 0; color: var(--ink);"><i class="fas fa-hdd" style="color: var(--teal); margin-left: 8px;"></i>سٹوریج اور استعمال کے اعداد و شمار (Metrics)</h3>
+              <button id="refreshMetricsBtn" class="btn" style="background: var(--teal); color: white; padding: 0.5rem 1rem;"><i class="fas fa-sync-alt"></i> ری فریش</button>
+            </div>
+            
+            <div id="metricsLoader" style="display: none; width: 100%;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div class="skeleton" style="height: 140px; border-radius: 8px;"></div>
+                <div class="skeleton" style="height: 140px; border-radius: 8px;"></div>
+                <div class="skeleton" style="height: 140px; border-radius: 8px;"></div>
+              </div>
+            </div>
+            
+            <div id="metricsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+              <!-- Cloudinary Storage -->
+              <div style="background: var(--parchment-2); padding: 1.5rem; border-radius: 8px; border: 1px solid #ccc;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                  <h4 style="margin: 0; color: #333; font-size: 1.1rem;"><i class="fas fa-cloud-upload-alt" style="color: #3498db; margin-left: 8px;"></i> کلاؤڈ نری سٹوریج</h4>
+                  <span id="cldStoragePercent" style="font-weight: bold; color: #e67e22; font-size: 1.1rem;">0%</span>
+                </div>
+                <div style="background: #e0e0e0; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; margin-bottom: 1rem;">
+                  <div id="cldStorageBar" style="background: #3498db; width: 0%; height: 100%; transition: width 0.5s ease;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #555;">
+                  <span id="cldStorageUsed">0 MB استعمال</span>
+                  <span id="cldStorageTotal">کل 25 GB</span>
+                </div>
+              </div>
+
+              <!-- Cloudinary Bandwidth -->
+              <div style="background: var(--parchment-2); padding: 1.5rem; border-radius: 8px; border: 1px solid #ccc;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                  <h4 style="margin: 0; color: #333; font-size: 1.1rem;"><i class="fas fa-network-wired" style="color: #9b59b6; margin-left: 8px;"></i> کلاؤڈ نری بینڈوڈتھ</h4>
+                  <span id="cldBandwidthPercent" style="font-weight: bold; color: #9b59b6; font-size: 1.1rem;">0%</span>
+                </div>
+                <div style="background: #e0e0e0; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; margin-bottom: 1rem;">
+                  <div id="cldBandwidthBar" style="background: #9b59b6; width: 0%; height: 100%; transition: width 0.5s ease;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #555;">
+                  <span id="cldBandwidthUsed">0 MB ٹرانسفر</span>
+                  <span id="cldBandwidthTotal">کل 25 GB</span>
+                </div>
+              </div>
+
+              <!-- Firebase Database -->
+              <div style="background: var(--parchment-2); padding: 1.5rem; border-radius: 8px; border: 1px solid #ccc;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                  <h4 style="margin: 0; color: #333; font-size: 1.1rem;"><i class="fas fa-database" style="color: #f39c12; margin-left: 8px;"></i> فائر بیس ڈیٹا بیس</h4>
+                  <span id="fbStoragePercent" style="font-weight: bold; color: #f39c12; font-size: 1.1rem;">0%</span>
+                </div>
+                <div style="background: #e0e0e0; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; margin-bottom: 1rem;">
+                  <div id="fbStorageBar" style="background: #f39c12; width: 0%; height: 100%; transition: width 0.5s ease;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #555;">
+                  <span id="fbStorageUsed">0 KB استعمال</span>
+                  <span id="fbStorageTotal">کل 1 GB مفت</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
