@@ -359,6 +359,7 @@ function initAdmin() {
         date: document.getElementById('itemDate').value,
         kalam: document.getElementById('itemKalam') ? document.getElementById('itemKalam').value : '',
         awaz: document.getElementById('itemAwaz') ? document.getElementById('itemAwaz').value : '',
+        bayan: document.getElementById('itemBayan') ? document.getElementById('itemBayan').value : '',
         excerpt: document.getElementById('itemExcerpt').value,
         status: document.getElementById('itemStatus').value,
         seoTitle: document.getElementById('itemSeoTitle') ? document.getElementById('itemSeoTitle').value : '',
@@ -1871,6 +1872,7 @@ window.editItem = function(dataKey, itemId) {
     document.getElementById('itemDate').value = item.date || '';
     if (document.getElementById('itemKalam')) document.getElementById('itemKalam').value = item.kalam || '';
     if (document.getElementById('itemAwaz')) document.getElementById('itemAwaz').value = item.awaz || '';
+    if (document.getElementById('itemBayan')) document.getElementById('itemBayan').value = item.bayan || '';
     document.getElementById('itemExcerpt').value = item.excerpt || '';
     document.getElementById('itemStatus').value = item.status || 'published';
     if (document.getElementById('itemSeoTitle')) document.getElementById('itemSeoTitle').value = item.seoTitle || '';

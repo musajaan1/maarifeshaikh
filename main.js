@@ -745,6 +745,7 @@ function initApp() {
               ${item.author ? `<span><i class="fa-solid fa-pen"></i> ${item.author}</span>` : ''}
               ${item.kalam ? `<span><i class="fa-solid fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
               ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
+              ${item.bayan ? `<span><i class="fa-solid fa-user-tie"></i> بیان: ${item.bayan}</span>` : ''}
               ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
             </div>
             <button class="btn-read-more" style="margin-top: auto; align-self: flex-end; border-radius: 50px; padding: 0.5rem 1.5rem;" onclick="window.renderSingleItem('${categoryId}', '${sectionId}', '${item.id}')">مزید پڑھیں <i class="fa-solid fa-arrow-left"></i></button>
@@ -765,6 +766,7 @@ function initApp() {
               ${item.author ? `<span><i class="fa-solid fa-pen"></i> ${item.author}</span>` : ''}
               ${item.kalam ? `<span><i class="fa-solid fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
               ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
+              ${item.bayan ? `<span><i class="fa-solid fa-user-tie"></i> بیان: ${item.bayan}</span>` : ''}
               ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
             </div>
             <button class="btn-read-more" style="margin-top: auto; align-self: flex-end; border-radius: 50px; padding: 0.5rem 1.5rem;" onclick="window.renderSingleItem('${categoryId}', '${sectionId}', '${item.id}')">مزید پڑھیں <i class="fa-solid fa-arrow-left"></i></button>
@@ -776,6 +778,7 @@ function initApp() {
               ${item.author ? `<span><i class="fa-solid fa-pen"></i> ${item.author}</span>` : ''}
               ${item.kalam ? `<span><i class="fa-solid fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
               ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
+              ${item.bayan ? `<span><i class="fa-solid fa-user-tie"></i> بیان: ${item.bayan}</span>` : ''}
               ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
             </div>
             ${item.mediaUrl ? `<audio controls style="width: 100%;" src="${getDirectMediaLink(item.mediaUrl)}"></audio>` : ''}
@@ -1015,6 +1018,7 @@ function initApp() {
       ${item.author ? `<span><i class="fa-solid fa-pen"></i> ${item.author}</span>` : ''}
       ${item.kalam ? `<span><i class="fa-solid fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
       ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
+      ${item.bayan ? `<span><i class="fa-solid fa-user-tie"></i> بیان: ${item.bayan}</span>` : ''}
       ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
       <span><i class="fa-solid fa-eye"></i> ${item.views || 0} ویوز</span>
     `;
@@ -1128,6 +1132,7 @@ function initApp() {
       ${item.author ? `<span><i class="fa-solid fa-pen"></i> ${item.author}</span>` : ''}
       ${item.kalam ? `<span><i class="fa-solid fa-quote-right"></i> کلام: ${item.kalam}</span>` : ''}
       ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
+      ${item.bayan ? `<span><i class="fa-solid fa-user-tie"></i> بیان: ${item.bayan}</span>` : ''}
       ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
       <span><i class="fa-solid fa-eye"></i> ${item.views || 0} ویوز</span>
     `;
