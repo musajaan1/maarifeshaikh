@@ -373,7 +373,8 @@ function initApp() {
     if (tickerContainer && tickerSection) {
       const news = siteData.newsTicker || { items: [], settings: {} };
       const items = news.items || [];
-      const settings = news.settings || { speed: 15, pauseOnHover: true, bgColor: '#16a085', textColor: '#ffffff' };
+      const settings = news.settings || { speed: 15, pauseOnHover: true, bgColor: '#16a085', textColor: '#ffffff', direction: 'rtl' };
+      const direction = settings.direction || 'rtl';
       
       const newsArr = items.map(item => {
         if (typeof item === 'string') return { type: 'text', content: item };
@@ -381,7 +382,7 @@ function initApp() {
       }).filter(n => n.content && n.content.trim() !== "");
 
       if (newsArr.length === 0) {
-        tickerContainer.innerHTML = `<span class="ticker-item" dir="rtl">فی الحال کوئی تازہ ترین خبر موجود نہیں ہے۔</span>`;
+        tickerContainer.innerHTML = `<span class="ticker-item" dir="rtl">ابھی ویب سائٹ پر کام چل رہا ہے وقتاً فوقتاً چیک کریں</span>`;
       } else {
         tickerContainer.innerHTML = newsArr.map(n => {
           if (n.type === 'image') {
@@ -390,6 +391,8 @@ function initApp() {
           return `<span class="ticker-item" dir="rtl">${n.content}</span>`;
         }).join('');
       }
+      
+      tickerContainer.parentElement.style.direction = direction;
 
       // Apply Settings
       tickerSection.style.backgroundColor = settings.bgColor;
@@ -403,9 +406,14 @@ function initApp() {
         document.head.appendChild(dynStyle);
       }
       
+      const keyframes = direction === 'ltr' 
+        ? `@keyframes marqueeDynamic { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`
+        : `@keyframes marqueeDynamic { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
+      
       dynStyle.innerHTML = `
+        ${keyframes}
         .ticker-content {
-          animation: marquee ${settings.speed}s linear infinite !important;
+          animation: marqueeDynamic ${settings.speed}s linear infinite !important;
         }
         .ticker-content:hover {
           animation-play-state: ${settings.pauseOnHover ? 'paused' : 'running'} !important;

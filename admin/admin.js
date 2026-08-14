@@ -785,6 +785,7 @@ function initAdmin() {
     const bgColor = document.getElementById('newsBgColor').value;
     const textColor = document.getElementById('newsTextColor').value;
     const pauseOnHover = document.getElementById('newsPauseHover').checked;
+    const direction = document.getElementById('newsDirection') ? document.getElementById('newsDirection').value : 'rtl';
 
     // Get current items
     const items = [];
@@ -816,11 +817,12 @@ function initAdmin() {
     }
     
     // We recreate a simple marquee logic in pure CSS for the preview
+    const keyframes = direction === 'ltr' 
+      ? `@keyframes previewScroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`
+      : `@keyframes previewScroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
+      
     document.getElementById('livePreviewStyles').innerHTML = `
-      @keyframes previewScroll {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
-      }
+      ${keyframes}
       .preview-ticker-content {
         display: inline-block;
         white-space: nowrap;
@@ -832,8 +834,8 @@ function initAdmin() {
     `;
 
     previewDiv.innerHTML = `
-      <div class="preview-ticker-container" style="background-color: ${bgColor}; color: ${textColor}; padding: 10px 0; overflow: hidden; position: relative; white-space: nowrap; direction: ltr;">
-        <div class="preview-ticker-content" dir="rtl">
+      <div class="preview-ticker-container" style="background-color: ${bgColor}; color: ${textColor}; padding: 10px 0; overflow: hidden; position: relative; white-space: nowrap; direction: ${direction};">
+        <div class="preview-ticker-content" dir="${direction}">
           ${content}
         </div>
       </div>
@@ -973,13 +975,16 @@ function initAdmin() {
   function loadNewsData() {
     const news = siteData.newsTicker || { items: [], settings: {} };
     const items = news.items || [];
-    const settings = news.settings || { speed: 15, pauseOnHover: true, bgColor: '#16a085', textColor: '#ffffff' };
+    const settings = news.settings || { speed: 15, pauseOnHover: true, bgColor: '#16a085', textColor: '#ffffff', direction: 'rtl' };
 
     document.getElementById('newsSpeed').value = settings.speed;
     document.getElementById('speedValue').textContent = settings.speed;
     document.getElementById('newsBgColor').value = settings.bgColor;
     document.getElementById('newsTextColor').value = settings.textColor;
     document.getElementById('newsPauseHover').checked = settings.pauseOnHover;
+    if (document.getElementById('newsDirection')) {
+      document.getElementById('newsDirection').value = settings.direction || 'rtl';
+    }
 
     const container = document.getElementById('newsItemsContainer');
     container.innerHTML = '';
@@ -1002,7 +1007,7 @@ function initAdmin() {
   }
 
   // Bind live preview events
-  const newsEvents = ['newsSpeed', 'newsBgColor', 'newsTextColor', 'newsPauseHover'];
+  const newsEvents = ['newsSpeed', 'newsBgColor', 'newsTextColor', 'newsPauseHover', 'newsDirection'];
   newsEvents.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -1098,7 +1103,8 @@ function initAdmin() {
           speed: parseInt(document.getElementById('newsSpeed').value),
           pauseOnHover: document.getElementById('newsPauseHover').checked,
           bgColor: document.getElementById('newsBgColor').value,
-          textColor: document.getElementById('newsTextColor').value
+          textColor: document.getElementById('newsTextColor').value,
+          direction: document.getElementById('newsDirection') ? document.getElementById('newsDirection').value : 'rtl'
         }
       };
 
