@@ -104,7 +104,12 @@ main.main-content {
   opacity: 1;
   z-index: 2;
 }
-.banner-slide 
+.banner-slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
 
 .banner-placeholder span {
   color: var(--gold);

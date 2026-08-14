@@ -463,9 +463,9 @@ function initApp() {
       document.getElementById("homeArticleDate").innerHTML = homeArt.date ? `<i class="far fa-calendar-alt"></i> ${homeArt.date}` : '';
       
       const imgContainer = document.getElementById("homeArticleImage");
-      if (homeArt.mediaUrl) {
-        imgContainer.innerHTML = `<img src="${homeArt.mediaUrl}" alt="${homeArt.title}" style="width:100%; height:100%; object-fit:cover;">`;
-      } else {
+        if (homeArt.mediaUrl) {
+          imgContainer.innerHTML = `<img src="${homeArt.mediaUrl}" alt="${homeArt.title}" style="width:100%; height:100%; object-fit:contain; background: transparent;">`;
+        } else {
         imgContainer.innerHTML = `<i class="fa-solid fa-book-open" style="font-size: 3rem; color: var(--gold);"></i>`;
       }
 
