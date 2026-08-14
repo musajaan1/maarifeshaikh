@@ -1,5 +1,14 @@
 let siteData = null;
 
+function getDirectDriveLink(url) {
+  if (!url || !url.includes('drive.google.com')) return url;
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+  }
+  return url;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('appRoot').innerHTML = '<div class="loader-container"><div class="spinner"></div><p style="margin-top: 15px; color: var(--teal); font-weight: 500;">ڈیٹا لوڈ ہو رہا ہے، براہ کرم انتظار کریں...</p></div>';
   fetch('/api/data')
@@ -763,7 +772,7 @@ function initApp() {
               ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
               ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
             </div>
-            ${item.mediaUrl ? `<audio controls style="width: 100%;" src="${item.mediaUrl}"></audio>` : ''}
+            ${item.mediaUrl ? `<audio controls style="width: 100%;" src="${getDirectDriveLink(item.mediaUrl)}"></audio>` : ''}
           `;
         }
         
@@ -1049,7 +1058,7 @@ function initApp() {
          <div class="pdf-container" style="margin-top: 2rem; margin-bottom: 2rem; background: var(--parchment-2); padding: 1rem; border-radius: 12px; border: 1px solid var(--gold);">
            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem; flex-wrap: wrap; gap:10px;">
              <h3 style="margin:0; color:var(--ink);">آن لائن مطالعہ کریں:</h3>
-             <a href="${finalPdfUrl}" target="_blank" class="btn-read-more" style="margin:0;"><i class="fa-solid fa-download"></i> ڈاؤن لوڈ کریں</a>
+             <a href="${getDirectDriveLink(finalPdfUrl)}" target="_blank" class="btn-read-more" style="margin:0;"><i class="fa-solid fa-download"></i> ڈاؤن لوڈ کریں</a>
            </div>
            <iframe src="${embedUrl}" width="100%" height="800px" style="border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white;"></iframe>
          </div>
@@ -1061,7 +1070,7 @@ function initApp() {
        extraMediaHtml += `
          <div class="audio-container" style="margin-top: 2rem; margin-bottom: 2rem; background: var(--parchment-2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--gold); text-align: center;">
            <h3 style="margin-bottom: 1rem; color: var(--ink);"><i class="fa-solid fa-headphones"></i> آڈیو بیان سنیں:</h3>
-           <audio controls style="width: 100%; max-width: 500px;" src="${finalAudioUrl}"></audio>
+           <audio controls style="width: 100%; max-width: 500px;" src="${getDirectDriveLink(finalAudioUrl)}"></audio>
          </div>
        `;
     }
