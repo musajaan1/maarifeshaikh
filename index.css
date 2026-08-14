@@ -561,6 +561,16 @@ ul {
     padding-right: 1.5rem;
   }
   
+  .banner-section {
+    padding: 0 0.75rem;
+    margin-bottom: -1.5rem;
+  }
+  
+  .banner-slide img {
+    height: auto;
+    object-fit: contain;
+  }
+  
   .header-container {
     display: flex;
     flex-wrap: wrap;
