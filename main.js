@@ -9,6 +9,18 @@ function getDirectDriveLink(url) {
   return url;
 }
 
+function renderAudioPlayer(url) {
+  if (!url) return '';
+  if (url.includes('drive.google.com')) {
+    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+      const iframeUrl = `https://drive.google.com/file/d/${match[1]}/preview`;
+      return `<iframe src="${iframeUrl}" width="100%" height="150" style="border: none; border-radius: 8px; background: var(--parchment-2);"></iframe>`;
+    }
+  }
+  return `<audio controls style="width: 100%; max-width: 500px;" src="${url}"></audio>`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('appRoot').innerHTML = '<div class="loader-container"><div class="spinner"></div><p style="margin-top: 15px; color: var(--teal); font-weight: 500;">ڈیٹا لوڈ ہو رہا ہے، براہ کرم انتظار کریں...</p></div>';
   fetch('/api/data')
@@ -772,7 +784,7 @@ function initApp() {
               ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
               ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
             </div>
-            ${item.mediaUrl ? `<audio controls style="width: 100%;" src="${getDirectDriveLink(item.mediaUrl)}"></audio>` : ''}
+            ${item.mediaUrl ? renderAudioPlayer(item.mediaUrl) : ''}
           `;
         }
         
@@ -1070,7 +1082,7 @@ function initApp() {
        extraMediaHtml += `
          <div class="audio-container" style="margin-top: 2rem; margin-bottom: 2rem; background: var(--parchment-2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--gold); text-align: center;">
            <h3 style="margin-bottom: 1rem; color: var(--ink);"><i class="fa-solid fa-headphones"></i> آڈیو بیان سنیں:</h3>
-           <audio controls style="width: 100%; max-width: 500px;" src="${getDirectDriveLink(finalAudioUrl)}"></audio>
+           ${renderAudioPlayer(finalAudioUrl)}
          </div>
        `;
     }
