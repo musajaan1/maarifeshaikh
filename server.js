@@ -150,6 +150,35 @@ app.get('/api/drive-stream', async (req, res) => {
   }
 });
 
+// MediaFire Stream Proxy
+app.get('/api/mediafire-stream', async (req, res) => {
+  const { url } = req.query;
+  if (!url) return res.status(400).send('Missing MediaFire URL');
+
+  try {
+    const response = await fetch(url);
+    const html = await response.text();
+    
+    // MediaFire direct links usually have id="downloadButton"
+    const match = html.match(/href="([^"]+)"\s+id="downloadButton"/i);
+    if (match && match[1]) {
+      return res.redirect(match[1]); // Redirect to direct download link
+    }
+    
+    // Fallback if the button ID changed, look for the generic download URL pattern
+    const fallbackMatch = html.match(/href="(https:\/\/[a-zA-Z0-9-]+\.mediafire\.com\/file\/.+?)"/i) || html.match(/href="(https:\/\/download[^"]+)"/i);
+    if (fallbackMatch && fallbackMatch[1]) {
+      return res.redirect(fallbackMatch[1]);
+    }
+    
+    // If we can't find a direct link, just redirect to the original URL
+    return res.redirect(url);
+  } catch (error) {
+    console.error('MediaFire Proxy Error:', error);
+    return res.redirect(url);
+  }
+});
+
 
 
 app.post('/api/logout', (req, res) => {
