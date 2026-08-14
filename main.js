@@ -4,21 +4,9 @@ function getDirectDriveLink(url) {
   if (!url || !url.includes('drive.google.com')) return url;
   const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
-    return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+    return `/api/drive-stream?id=${match[1]}`;
   }
   return url;
-}
-
-function renderAudioPlayer(url) {
-  if (!url) return '';
-  if (url.includes('drive.google.com')) {
-    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (match && match[1]) {
-      const iframeUrl = `https://drive.google.com/file/d/${match[1]}/preview`;
-      return `<iframe src="${iframeUrl}" width="100%" height="150" style="border: none; border-radius: 8px; background: var(--parchment-2);"></iframe>`;
-    }
-  }
-  return `<audio controls style="width: 100%; max-width: 500px;" src="${url}"></audio>`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -784,7 +772,7 @@ function initApp() {
               ${item.awaz ? `<span><i class="fa-solid fa-microphone"></i> آواز: ${item.awaz}</span>` : ''}
               ${item.date ? `<span><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
             </div>
-            ${item.mediaUrl ? renderAudioPlayer(item.mediaUrl) : ''}
+            ${item.mediaUrl ? `<audio controls style="width: 100%;" src="${getDirectDriveLink(item.mediaUrl)}"></audio>` : ''}
           `;
         }
         
@@ -1082,7 +1070,7 @@ function initApp() {
        extraMediaHtml += `
          <div class="audio-container" style="margin-top: 2rem; margin-bottom: 2rem; background: var(--parchment-2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--gold); text-align: center;">
            <h3 style="margin-bottom: 1rem; color: var(--ink);"><i class="fa-solid fa-headphones"></i> آڈیو بیان سنیں:</h3>
-           ${renderAudioPlayer(finalAudioUrl)}
+           <audio controls style="width: 100%; max-width: 500px;" src="${getDirectDriveLink(finalAudioUrl)}"></audio>
          </div>
        `;
     }

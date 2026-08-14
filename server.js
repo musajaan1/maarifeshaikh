@@ -113,6 +113,45 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// Google Drive Stream Proxy
+app.get('/api/drive-stream', async (req, res) => {
+  const { id } = req.query;
+  if (!id) return res.status(400).send('Missing Drive File ID');
+
+  try {
+    const url = `https://drive.google.com/uc?export=download&id=${id}`;
+    
+    // Fetch headers to see if Google Drive redirects directly (for small files)
+    const response = await fetch(url, { redirect: 'manual' });
+    
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get('location');
+      if (location) {
+        return res.redirect(location);
+      }
+    }
+    
+    // If no redirect, it means it returned HTML with a virus scan warning (large files)
+    const html = await response.text();
+    const confirmMatch = html.match(/confirm=([a-zA-Z0-9_-]+)/);
+    
+    if (confirmMatch) {
+      const confirmToken = confirmMatch[1];
+      const finalUrl = `https://drive.google.com/uc?export=download&id=${id}&confirm=${confirmToken}`;
+      return res.redirect(finalUrl);
+    }
+    
+    // If token not found, fallback to original URL
+    return res.redirect(url);
+    
+  } catch (error) {
+    console.error('Drive Proxy Error:', error);
+    return res.redirect(`https://drive.google.com/uc?export=download&id=${id}`);
+  }
+});
+
+
+
 app.post('/api/logout', (req, res) => {
   res.clearCookie(COOKIE_NAME);
   res.json({ success: true });
