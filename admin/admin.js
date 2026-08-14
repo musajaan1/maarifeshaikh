@@ -1653,90 +1653,131 @@ function updateCategoryDropdowns() {
   });
 }
 
+
 function renderSectionsList() {
-  const catId = document.getElementById('manageSecCategorySelect').value;
-  const sectionsArea = document.getElementById('sectionsArea');
-  const list = document.getElementById('sectionsList');
-  
-  if (!catId) {
-    sectionsArea.style.display = 'none';
-    return;
-  }
-  
-  sectionsArea.style.display = 'block';
-  list.innerHTML = '';
-  
-  const sections = siteData.categories[catId].sections;
-  if (sections.length === 0) {
-    list.innerHTML = '<p style="color:#777; text-align: center;">اس کیٹگری میں کوئی سیکشن موجود نہیں۔</p>';
-    return;
-  }
-  
-  sections.forEach(sec => {
-    const div = document.createElement('div');
-    div.className = 'manage-item';
-    div.dataset.id = sec.id;
-    div.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 1rem; cursor: grab;" class="sort-handle">
-        <i class="fas fa-grip-lines" style="color: #aaa; font-size: 1.2rem;"></i>
-      </div>
-      <div class="manage-item-info" style="flex: 1;">
-        <strong>${sec.title}</strong>
-      </div>
-      <div style="display: flex; gap: 0.5rem;">
-        <button class="btn-submit" style="width: auto; background-color: var(--gold);" onclick="editSection('${catId}', '${sec.id}')">
-          <i class="fas fa-edit"></i> ترمیم کریں
-        </button>
-        <button class="btn-delete" onclick="deleteSection('${catId}', '${sec.id}')">
-          <i class="fas fa-trash"></i> حذف کریں
-        </button>
-      </div>
-    `;
-    list.appendChild(div);
-  });
-
-  if (typeof Sortable !== 'undefined') {
-    new Sortable(list, {
-      handle: '.sort-handle',
-      animation: 150,
-      onEnd: function (evt) {
-        if (evt.oldIndex === evt.newIndex) return;
-        const catId = document.getElementById('manageSecCategorySelect').value;
-        const arr = siteData.categories[catId].sections;
-        arr.splice(evt.newIndex, 0, arr.splice(evt.oldIndex, 1)[0]);
-        saveDataToServer();
-      }
+    const catId = document.getElementById('manageSecCategorySelect').value;
+    const sectionsArea = document.getElementById('sectionsArea');
+    const list = document.getElementById('sectionsList');
+    
+    if (!catId) {
+      sectionsArea.style.display = 'none';
+      return;
+    }
+    
+    sectionsArea.style.display = 'block';
+    list.innerHTML = '';
+    
+    const sections = siteData.categories[catId].sections;
+    
+    // Populate the Parent Dropdowns
+    const parentOptions = '<option value="">-- مین سیکشن (کوئی نہیں) --</option>' + 
+      sections.filter(s => !s.parentId).map(s => `<option value="${s.id}">${s.title}</option>`).join('');
+    
+    const newSecParent = document.getElementById('newSectionParent');
+    if (newSecParent) newSecParent.innerHTML = parentOptions;
+    
+    const editSecParent = document.getElementById('editSectionParent');
+    if (editSecParent) editSecParent.innerHTML = parentOptions;
+    
+    if (sections.length === 0) {
+      list.innerHTML = '<p style="color:#777; text-align: center;">اس کیٹیگری میں کوئی سیکشن موجود نہیں ہے۔</p>';
+      return;
+    }
+    
+    // Sort sections for display: Top level first, then its children
+    let sortedSections = [];
+    sections.filter(s => !s.parentId).forEach(parent => {
+      sortedSections.push(parent);
+      sortedSections.push(...sections.filter(s => s.parentId === parent.id));
     });
-  }
-}
+    // Add any orphans just in case
+    sections.forEach(s => { if (!sortedSections.includes(s)) sortedSections.push(s); });
+    
+    sortedSections.forEach(sec => {
+      const div = document.createElement('div');
+      div.className = 'manage-item';
+      div.dataset.id = sec.id;
+      
+      const isSub = !!sec.parentId;
+      const marginStyle = isSub ? 'margin-right: 2rem; border-right: 3px solid #ccc; padding-right: 10px;' : '';
+      const prefix = isSub ? '<i class="fas fa-level-down-alt" style="transform: rotate(90deg); margin-left: 8px; color: #aaa;"></i> ' : '';
+      const parentName = isSub ? ` <span style="font-size: 0.8rem; color: #888;">(سب-سیکشن)</span>` : '';
 
+      div.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 1rem; cursor: grab;" class="sort-handle">
+          <i class="fas fa-grip-lines" style="color: #aaa; font-size: 1.2rem;"></i>
+        </div>
+        <div class="manage-item-info" style="flex: 1; ${marginStyle}">
+          <strong>${prefix}${sec.title}${parentName}</strong>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn-submit" style="width: auto; background-color: var(--gold);" onclick="editSection('${catId}', '${sec.id}')">
+            <i class="fas fa-edit"></i> ترمیم کریں
+          </button>
+          <button class="btn-delete" onclick="deleteSection('${catId}', '${sec.id}')">
+            <i class="fas fa-trash"></i> حذف کریں
+          </button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  
+    if (typeof Sortable !== 'undefined') {
+      new Sortable(list, {
+        handle: '.sort-handle',
+        animation: 150,
+        onEnd: function (evt) {
+          if (evt.oldIndex === evt.newIndex) return;
+          // Reorder the original array based on the new sorted order
+          const items = Array.from(list.children).map(child => child.dataset.id);
+          const catId = document.getElementById('manageSecCategorySelect').value;
+          const oldArr = siteData.categories[catId].sections;
+          const newArr = [];
+          items.forEach(id => {
+            const sec = oldArr.find(s => s.id === id);
+            if (sec) newArr.push(sec);
+          });
+          siteData.categories[catId].sections = newArr;
+          saveDataToServer();
+        }
+      });
+    }
+  }
 window.editSection = function(catId, secId) {
-  const sec = siteData.categories[catId].sections.find(s => s.id == secId);
-  if (!sec) return;
+    const sec = siteData.categories[catId].sections.find(s => s.id == secId);
+    if (!sec) return;
+    
+    const seriesData = extractSeriesAndSubtitle(sec.title);
+    const series = seriesData.series || sec.title;
+    let currentColor = '#fbbf24';
+    
+    if (siteData.categories[catId].seriesColors && siteData.categories[catId].seriesColors[series]) {
+      currentColor = siteData.categories[catId].seriesColors[series];
+    }
   
-  const seriesData = extractSeriesAndSubtitle(sec.title);
-  const series = seriesData.series || sec.title;
-  let currentColor = '#fbbf24';
+    document.getElementById('editSectionCatId').value = catId;
+    document.getElementById('editSectionId').value = secId;
+    document.getElementById('editSectionNameInput').value = sec.title;
+    document.getElementById('editSectionColorInput').value = currentColor;
+    const editSecParent = document.getElementById('editSectionParent');
+    if (editSecParent) {
+      editSecParent.value = sec.parentId || '';
+      // Disable selecting itself as parent
+      Array.from(editSecParent.options).forEach(opt => {
+        opt.disabled = (opt.value === secId);
+      });
+    }
+    
+    if (seriesData.series) {
+      document.getElementById('editSectionSeriesInfo').textContent = `رنگ '${series}' سیریز کے لیے محفوظ ہوگا۔`;
+    } else {
+      document.getElementById('editSectionSeriesInfo').textContent = '';
+    }
   
-  if (siteData.categories[catId].seriesColors && siteData.categories[catId].seriesColors[series]) {
-    currentColor = siteData.categories[catId].seriesColors[series];
-  }
+    document.getElementById('editSectionModal').style.display = 'flex';
+  };
 
-  document.getElementById('editSectionCatId').value = catId;
-  document.getElementById('editSectionId').value = secId;
-  document.getElementById('editSectionNameInput').value = sec.title;
-  document.getElementById('editSectionColorInput').value = currentColor;
-  
-  if (seriesData.series) {
-    document.getElementById('editSectionSeriesInfo').textContent = `یہ رنگ '${series}' سیریز پر لاگو ہوگا۔`;
-  } else {
-    document.getElementById('editSectionSeriesInfo').textContent = '';
-  }
-
-  document.getElementById('editSectionModal').style.display = 'flex';
-}
-
-document.getElementById('saveEditSectionBtn').addEventListener('click', () => {
+  document.getElementById('saveEditSectionBtn').addEventListener('click', () => {
   const catId = document.getElementById('editSectionCatId').value;
   const secId = document.getElementById('editSectionId').value;
   const newName = document.getElementById('editSectionNameInput').value.trim();

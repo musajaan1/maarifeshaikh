@@ -626,7 +626,7 @@ function initApp() {
     const groupedSections = {};
     const ungroupedSections = [];
 
-    currentCategory.sections.forEach(sec => {
+    currentCategory.sections.filter(sec => !sec.parentId).forEach(sec => {
       const { series, subtitle } = extractSeriesAndSubtitle(sec.title);
       if (series) {
         if (!groupedSections[series]) groupedSections[series] = [];
@@ -699,7 +699,7 @@ function initApp() {
     updateSEO(currentCategory.title, currentCategory.title + " کے متعلق مضامین اور مواد", currentCategory.title + ", معارف شیخ");
   }
 
-  function renderSection(categoryId, sectionId) {
+    function renderSection(categoryId, sectionId) {
     const catTitle = siteData.categories[categoryId]?.title || categoryId;
     const sec = siteData.categories[categoryId]?.sections?.find(s => s.id === sectionId);
     const secTitle = sec ? sec.title : sectionId;
@@ -713,16 +713,112 @@ function initApp() {
     currentSection = sectionObj;
     
     document.getElementById("backBtn").addEventListener("click", () => {
-      renderCategory(categoryId);
+      if (currentSection.parentId) {
+        renderSection(categoryId, currentSection.parentId);
+      } else {
+        renderCategory(categoryId);
+      }
     });
 
     const breadcrumb = document.getElementById("secBreadcrumb");
-    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
+    if (currentSection.parentId) {
+      const parentSec = currentCategory.sections.find(s => s.id === currentSection.parentId);
+      breadcrumb.innerHTML = `<a href="#" class="nav-home">صفحہ اول</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-sec" data-category="${categoryId}" data-section="${parentSec.id}">${parentSec.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
+    } else {
+      breadcrumb.innerHTML = `<a href="#" class="nav-home">صفحہ اول</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
+    }
     
     const title = document.getElementById("secTitle");
     title.textContent = currentSection.title;
     
+    const subSectionGrid = document.getElementById("subSectionGrid");
     const itemList = document.getElementById("itemList");
+    
+    const subSections = currentCategory.sections.filter(s => s.parentId === sectionId);
+    
+    if (subSections.length > 0) {
+      // Render sub-sections
+      if (itemList) itemList.style.display = 'none';
+      if (subSectionGrid) {
+        subSectionGrid.style.display = 'block';
+        
+        // Group sections (similar to renderCategory)
+        const groupedSections = {};
+        const ungroupedSections = [];
+
+        subSections.forEach(sub => {
+          const { series, subtitle } = extractSeriesAndSubtitle(sub.title);
+          if (series) {
+            if (!groupedSections[series]) groupedSections[series] = [];
+            groupedSections[series].push({ ...sub, displayTitle: subtitle });
+          } else {
+            ungroupedSections.push({ ...sub, displayTitle: sub.title });
+          }
+        });
+
+        // Render grouped sections
+        Object.keys(groupedSections).forEach(series => {
+          const groupDiv = document.createElement("div");
+          groupDiv.className = "series-group";
+          
+          const groupTitle = document.createElement("h3");
+          groupTitle.className = "series-title";
+          groupTitle.textContent = series;
+          groupDiv.appendChild(groupTitle);
+          
+          const grid = document.createElement("div");
+          grid.className = "section-grid";
+          
+          let folderColor = '#fbbf24';
+          if (currentCategory.seriesColors && currentCategory.seriesColors[series]) {
+            folderColor = currentCategory.seriesColors[series];
+          }
+
+          groupedSections[series].forEach(sub => {
+            const card = document.createElement("div");
+            card.className = "section-card";
+            card.innerHTML = `<i class="fa-solid fa-folder" style="color: ${folderColor};"></i> <span title="${sub.displayTitle}">${sub.displayTitle}</span>`;
+            card.dataset.sectionId = sub.id;
+            card.addEventListener("click", () => renderSection(categoryId, sub.id));
+            grid.appendChild(card);
+          });
+          
+          groupDiv.appendChild(grid);
+          subSectionGrid.appendChild(groupDiv);
+        });
+
+        // Render ungrouped sections
+        if (ungroupedSections.length > 0) {
+          const groupDiv = document.createElement("div");
+          groupDiv.className = "series-group";
+          
+          const grid = document.createElement("div");
+          grid.className = "section-grid";
+          
+          ungroupedSections.forEach(sub => {
+            let folderColor = '#fbbf24';
+            if (currentCategory.seriesColors && currentCategory.seriesColors[sub.title]) {
+              folderColor = currentCategory.seriesColors[sub.title];
+            }
+
+            const card = document.createElement("div");
+            card.className = "section-card";
+            card.innerHTML = `<i class="fa-solid fa-folder" style="color: ${folderColor};"></i> <span title="${sub.displayTitle}">${sub.displayTitle}</span>`;
+            card.dataset.sectionId = sub.id;
+            card.addEventListener("click", () => renderSection(categoryId, sub.id));
+            grid.appendChild(card);
+          });
+          
+          groupDiv.appendChild(grid);
+          subSectionGrid.appendChild(groupDiv);
+        }
+      }
+      return; // Skip rendering items since this is a parent section
+    } else {
+      if (subSectionGrid) subSectionGrid.style.display = 'none';
+      if (itemList) itemList.style.display = 'block';
+    }
+
     const dataKey = `${categoryId}_${sectionId}`;
     const items = (siteData.content[dataKey] || []).filter(a => a.status !== 'draft');
     
