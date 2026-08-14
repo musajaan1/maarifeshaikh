@@ -990,6 +990,14 @@ function initAdmin() {
       addNewsInput(); // Add at least one empty input
     }
     
+    if (typeof Sortable !== 'undefined') {
+      new Sortable(container, {
+        handle: '.news-drag-handle',
+        animation: 150,
+        onEnd: renderNewsPreview
+      });
+    }
+    
     renderNewsPreview();
   }
 
