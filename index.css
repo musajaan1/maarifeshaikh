@@ -577,11 +577,20 @@ ul {
     justify-content: space-between;
     align-items: center;
     padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-bottom: 0.5rem;
   }
   
-  .header-right, .header-left {
+  .header-right {
     flex: unset;
+  }
+
+  .header-left {
+    flex: 100%;
+    order: 4;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0 0.75rem;
+    justify-content: center;
   }
 
   .header-middle {

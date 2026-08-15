@@ -1389,6 +1389,201 @@ function initAdmin() {
         const articleData = {
           title: document.getElementById('homeTitle').value,
           author: document.getElementById('homeAuthor').value,
+      }
+    });
+  }
+
+  // Ad Submit (Save all settings)
+  const adForm = document.getElementById('adForm');
+  if (adForm) {
+    adForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      siteData.adInterval = parseInt(document.getElementById('adInterval').value) || 5;
+      
+      const saveBtn = document.getElementById('saveAdBtn');
+      const originalBtnText = saveBtn.innerHTML;
+      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> محفوظ ہو رہا ہے...';
+      saveBtn.disabled = true;
+
+      saveDataToServer(() => {
+        showStatus('اشتہارات کی سیٹنگز کامیابی سے محفوظ ہو گئیں!', 'success', 'adStatusMessage');
+        saveBtn.innerHTML = originalBtnText;
+        saveBtn.disabled = false;
+      });
+    });
+  }
+
+  function loadHomeArticleData(index = -1) {
+    if (!siteData.homeArticles) siteData.homeArticles = [];
+    
+    let art = {};
+    if (index >= 0 && siteData.homeArticles[index]) {
+      art = siteData.homeArticles[index];
+      document.getElementById('homeArticleEditIndex').value = index;
+      document.getElementById('saveHomeBtn').innerHTML = '<i class="fas fa-save"></i> اپڈیٹ کریں';
+    } else {
+      document.getElementById('homeArticleEditIndex').value = -1;
+      document.getElementById('saveHomeBtn').innerHTML = '<i class="fas fa-save"></i> نیا شامل کریں';
+    }
+
+    document.getElementById('homeTitle').value = art.title || '';
+    document.getElementById('homeAuthor').value = art.author || '';
+    document.getElementById('homeDate').value = art.date || '';
+    document.getElementById('homeExcerpt').value = art.excerpt || '';
+    if (document.getElementById('homeStatus')) {
+      document.getElementById('homeStatus').value = art.status || 'published';
+    }
+    if (document.getElementById('homeSeoTitle')) {
+      document.getElementById('homeSeoTitle').value = art.seoTitle || '';
+      document.getElementById('homeSeoDesc').value = art.seoDesc || '';
+      document.getElementById('homeSeoKeywords').value = art.seoKeywords || '';
+    }
+    if (document.getElementById('homeImageUrl')) {
+      document.getElementById('homeImageUrl').value = art.mediaUrl || '';
+    }
+    
+    if (art.mediaUrl) {
+      document.getElementById('currentHomeImage').innerHTML = `
+        <img src="${art.mediaUrl}" style="max-height: 100px; border-radius: 4px;">
+        <button type="button" class="btn-delete delete-home-img-btn" data-index="${index}" style="padding: 0.5rem 1rem;"><i class="fas fa-trash"></i> تصویر ہٹائیں</button>
+      `;
+      // Attach delete event
+      document.querySelector('.delete-home-img-btn').addEventListener('click', async (e) => {
+        const idx = e.currentTarget.dataset.index;
+        if (confirm('کیا آپ واقعی اس تصویر کو حذف کرنا چاہتے ہیں؟')) {
+          const imgUrl = siteData.homeArticles[idx].mediaUrl;
+          try {
+            await fetch('/api/delete-file', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ url: imgUrl })
+            });
+          } catch(err) { console.error(err); }
+          
+          siteData.homeArticles[idx].mediaUrl = "";
+          saveDataToServer(() => {
+            loadHomeArticleData(idx);
+            renderHomeArticlesList();
+            showStatus('تصویر ہٹا دی گئی!', 'success', 'homeStatusMessage');
+          });
+        }
+      });
+    } else {
+      document.getElementById('currentHomeImage').innerHTML = '';
+    }
+    
+    if (!tinymce.get('homeRichEditor')) {
+      initTinyMCE();
+    }
+    setTimeout(() => {
+      if (tinymce.get('homeRichEditor')) {
+        tinymce.get('homeRichEditor').setContent(art.fullContent || '');
+      }
+    }, 100);
+  }
+  
+  window.editHomeArticle = function(index) {
+    loadHomeArticleData(index);
+    window.scrollTo({ top: document.getElementById('section-home-article').offsetTop, behavior: 'smooth' });
+  };
+  
+  window.deleteHomeArticle = function(index) {
+    if (confirm("کیا آپ واقعی اس ہوم پیج مضمون کو ڈیلیٹ کرنا چاہتے ہیں؟")) {
+      siteData.homeArticles.splice(index, 1);
+      saveDataToServer(() => {
+        renderHomeArticlesList();
+        loadHomeArticleData(-1);
+        showStatus('مضمون ڈیلیٹ ہو گیا!', 'success', 'homeStatusMessage');
+      });
+    }
+  };
+
+  function renderHomeArticlesList() {
+    const list = document.getElementById('homeArticlesList');
+    if (!list) return;
+    list.innerHTML = '';
+    
+    const articles = siteData.homeArticles || [];
+    if (articles.length === 0) {
+      list.innerHTML = '<p style="color:#777; text-align: center;">کوئی ہوم پیج مضمون موجود نہیں۔</p>';
+      return;
+    }
+    
+    articles.forEach((art, index) => {
+      const div = document.createElement('div');
+      div.className = 'manage-item';
+      div.dataset.id = index;
+      div.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 1rem; cursor: grab;" class="sort-handle">
+          <i class="fas fa-grip-lines" style="color: #aaa; font-size: 1.2rem;"></i>
+        </div>
+      <div class="manage-item-info" style="flex: 1;">
+        <strong>${art.title} ${art.status === 'draft' ? '<span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-right: 10px;">مسودہ (Draft)</span>' : ''}</strong>
+        <span style="font-size: 0.9em; color: #555; margin-right: 10px;">(${art.date || 'کوئی تاریخ نہیں'})</span>
+      </div>
+        <div class="manage-item-actions">
+          <button class="btn-edit" onclick="editHomeArticle(${index})"><i class="fas fa-edit"></i></button>
+          <button class="btn-delete" onclick="deleteHomeArticle(${index})"><i class="fas fa-trash"></i></button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+    
+    if (typeof Sortable !== 'undefined') {
+      new Sortable(list, {
+        handle: '.sort-handle',
+        animation: 150,
+        onEnd: function (evt) {
+          if (evt.oldIndex === evt.newIndex) return;
+          const arr = siteData.homeArticles || [];
+          arr.splice(evt.newIndex, 0, arr.splice(evt.oldIndex, 1)[0]);
+          saveDataToServer(() => {
+            renderHomeArticlesList();
+          });
+        }
+      });
+    }
+  }
+
+  // Handle New Article Button
+  document.getElementById('newHomeArticleBtn').addEventListener('click', () => {
+    loadHomeArticleData(-1);
+  });
+
+  // Home Article Submit
+  const homeForm = document.getElementById('homeArticleForm');
+  if (homeForm) {
+    homeForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const saveBtn = document.getElementById('saveHomeBtn');
+      const originalBtnText = saveBtn.innerHTML;
+      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> محفوظ ہو رہا ہے...';
+      saveBtn.disabled = true;
+
+      try {
+        const editIndex = parseInt(document.getElementById('homeArticleEditIndex').value, 10);
+        const isEditing = editIndex >= 0;
+        
+        if (!siteData.homeArticles) siteData.homeArticles = [];
+        
+        let fileUrl = '';
+        if (isEditing && siteData.homeArticles[editIndex]) {
+          fileUrl = siteData.homeArticles[editIndex].mediaUrl || '';
+        }
+        
+        const fileInput = document.getElementById('homeImageFile');
+        const urlInput = document.getElementById('homeImageUrl');
+        if (fileInput.files.length > 0) {
+          fileUrl = await uploadFile(fileInput.files[0]);
+        } else if (urlInput && urlInput.value.trim()) {
+          fileUrl = urlInput.value.trim();
+        }
+
+        const articleData = {
+          title: document.getElementById('homeTitle').value,
+          author: document.getElementById('homeAuthor').value,
           date: document.getElementById('homeDate').value,
           excerpt: document.getElementById('homeExcerpt').value,
           fullContent: tinymce.get('homeRichEditor') ? tinymce.get('homeRichEditor').getContent() : '',
@@ -1431,8 +1626,10 @@ function initAdmin() {
     const catId = manageSecCategorySelect.value;
     const nameInput = document.getElementById('newSectionName');
     const colorInput = document.getElementById('newSectionColor');
+    const parentInput = document.getElementById('newSectionParent');
     const secName = nameInput.value.trim();
     const color = colorInput ? colorInput.value : '#fbbf24';
+    const parentId = parentInput ? parentInput.value : '';
 
     if (!secName || !catId) {
       showStatus('کیٹگری منتخب کریں اور سیکشن کا نام درج کریں۔', 'error');
@@ -1440,7 +1637,11 @@ function initAdmin() {
     }
 
     const secId = 'sec_' + Date.now();
-    siteData.categories[catId].sections.push({ id: secId, title: secName });
+    const newSection = { id: secId, title: secName };
+    if (parentId) {
+      newSection.parent_id = parentId;
+    }
+    siteData.categories[catId].sections.push(newSection);
 
     const seriesData = extractSeriesAndSubtitle(secName);
     const series = seriesData.series || secName;
@@ -1671,7 +1872,7 @@ function renderSectionsList() {
     
     // Populate the Parent Dropdowns
     const parentOptions = '<option value="">-- مین سیکشن (کوئی نہیں) --</option>' + 
-      sections.filter(s => !s.parentId).map(s => `<option value="${s.id}">${s.title}</option>`).join('');
+      sections.filter(s => !s.parent_id).map(s => `<option value="${s.id}">${s.title}</option>`).join('');
     
     const newSecParent = document.getElementById('newSectionParent');
     if (newSecParent) newSecParent.innerHTML = parentOptions;
@@ -1686,9 +1887,9 @@ function renderSectionsList() {
     
     // Sort sections for display: Top level first, then its children
     let sortedSections = [];
-    sections.filter(s => !s.parentId).forEach(parent => {
+    sections.filter(s => !s.parent_id).forEach(parent => {
       sortedSections.push(parent);
-      sortedSections.push(...sections.filter(s => s.parentId === parent.id));
+      sortedSections.push(...sections.filter(s => s.parent_id === parent.id));
     });
     // Add any orphans just in case
     sections.forEach(s => { if (!sortedSections.includes(s)) sortedSections.push(s); });
@@ -1698,9 +1899,9 @@ function renderSectionsList() {
       div.className = 'manage-item';
       div.dataset.id = sec.id;
       
-      const isSub = !!sec.parentId;
-      const marginStyle = isSub ? 'margin-right: 2rem; border-right: 3px solid #ccc; padding-right: 10px;' : '';
-      const prefix = isSub ? '<i class="fas fa-level-down-alt" style="transform: rotate(90deg); margin-left: 8px; color: #aaa;"></i> ' : '';
+      const isSub = !!sec.parent_id;
+      const marginStyle = isSub ? 'margin-right: 3rem; border-right: 3px solid #fbbf24; padding-right: 15px; background-color: rgba(251, 191, 36, 0.05); border-radius: 4px;' : '';
+      const prefix = isSub ? '<span style="color: #fbbf24; margin-left: 8px; font-weight: bold;">↳</span> ' : '';
       const parentName = isSub ? ` <span style="font-size: 0.8rem; color: #888;">(سب-سیکشن)</span>` : '';
 
       div.innerHTML = `
@@ -1761,7 +1962,7 @@ window.editSection = function(catId, secId) {
     document.getElementById('editSectionColorInput').value = currentColor;
     const editSecParent = document.getElementById('editSectionParent');
     if (editSecParent) {
-      editSecParent.value = sec.parentId || '';
+      editSecParent.value = sec.parent_id || '';
       // Disable selecting itself as parent
       Array.from(editSecParent.options).forEach(opt => {
         opt.disabled = (opt.value === secId);
@@ -1782,15 +1983,23 @@ window.editSection = function(catId, secId) {
   const secId = document.getElementById('editSectionId').value;
   const newName = document.getElementById('editSectionNameInput').value.trim();
   const color = document.getElementById('editSectionColorInput').value;
+  const parentSelect = document.getElementById('editSectionParent');
+  const newParentId = parentSelect ? parentSelect.value : '';
 
   if (!newName) {
     showStatus('سیکشن کا نام درج کریں۔', 'error');
     return;
   }
 
-  const sec = siteData.categories[catId].sections.find(s => s.id == secId);
-  if (sec) {
-    sec.title = newName;
+  const secIndex = siteData.categories[catId].sections.findIndex(s => s.id == secId);
+  if (secIndex !== -1) {
+    siteData.categories[catId].sections[secIndex].title = newName;
+    if (newParentId) {
+      siteData.categories[catId].sections[secIndex].parent_id = newParentId;
+    } else {
+      delete siteData.categories[catId].sections[secIndex].parent_id;
+    }
+    
     const seriesData = extractSeriesAndSubtitle(newName);
     const series = seriesData.series || newName;
     

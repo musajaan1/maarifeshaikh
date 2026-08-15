@@ -626,7 +626,7 @@ function initApp() {
     const groupedSections = {};
     const ungroupedSections = [];
 
-    currentCategory.sections.filter(sec => !sec.parentId).forEach(sec => {
+    currentCategory.sections.filter(sec => !sec.parent_id).forEach(sec => {
       const { series, subtitle } = extractSeriesAndSubtitle(sec.title);
       if (series) {
         if (!groupedSections[series]) groupedSections[series] = [];
@@ -723,9 +723,9 @@ function initApp() {
     const breadcrumb = document.getElementById("secBreadcrumb");
     if (currentSection.parentId) {
       const parentSec = currentCategory.sections.find(s => s.id === currentSection.parentId);
-      breadcrumb.innerHTML = `<a href="#" class="nav-home">صفحہ اول</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-sec" data-category="${categoryId}" data-section="${parentSec.id}">${parentSec.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
+      breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-sec" data-category="${categoryId}" data-section="${parentSec.id}">${parentSec.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
     } else {
-      breadcrumb.innerHTML = `<a href="#" class="nav-home">صفحہ اول</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
+      breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
     }
     
     const title = document.getElementById("secTitle");
@@ -734,11 +734,10 @@ function initApp() {
     const subSectionGrid = document.getElementById("subSectionGrid");
     const itemList = document.getElementById("itemList");
     
-    const subSections = currentCategory.sections.filter(s => s.parentId === sectionId);
+    const subSections = currentCategory.sections.filter(s => s.parent_id === sectionId);
     
     if (subSections.length > 0) {
       // Render sub-sections
-      if (itemList) itemList.style.display = 'none';
       if (subSectionGrid) {
         subSectionGrid.style.display = 'block';
         
@@ -1113,7 +1112,12 @@ function initApp() {
     });
 
     const breadcrumb = document.getElementById("singleBreadcrumb");
-    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" onclick="window.renderSectionHandler('${categoryId}', '${sectionId}'); return false;">${currentSection.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${item.title}`;
+    if (currentSection.parentId) {
+      const parentSec = currentCategory.sections.find(s => s.id === currentSection.parentId);
+      breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-sec" data-category="${categoryId}" data-section="${parentSec.id}">${parentSec.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-sec" data-category="${categoryId}" data-section="${sectionId}">${currentSection.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${item.title}`;
+    } else {
+      breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-sec" data-category="${categoryId}" data-section="${sectionId}">${currentSection.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${item.title}`;
+    }
     
     document.getElementById("singleTitle").textContent = item.title;
     
