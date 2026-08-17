@@ -1431,8 +1431,10 @@ function initAdmin() {
     const catId = manageSecCategorySelect.value;
     const nameInput = document.getElementById('newSectionName');
     const colorInput = document.getElementById('newSectionColor');
+    const parentSelect = document.getElementById('newSectionParent');
     const secName = nameInput.value.trim();
     const color = colorInput ? colorInput.value : '#fbbf24';
+    const parentId = parentSelect ? parentSelect.value : '';
 
     if (!secName || !catId) {
       showStatus('کیٹگری منتخب کریں اور سیکشن کا نام درج کریں۔', 'error');
@@ -1440,7 +1442,9 @@ function initAdmin() {
     }
 
     const secId = 'sec_' + Date.now();
-    siteData.categories[catId].sections.push({ id: secId, title: secName });
+    const newSecObj = { id: secId, title: secName };
+    if (parentId) newSecObj.parent_id = parentId;
+    siteData.categories[catId].sections.push(newSecObj);
 
     const seriesData = extractSeriesAndSubtitle(secName);
     const series = seriesData.series || secName;
@@ -1671,14 +1675,55 @@ function renderSectionsList() {
     list.innerHTML = '<p style="color:#777; text-align: center;">اس کیٹگری میں کوئی سیکشن موجود نہیں۔</p>';
     return;
   }
-  
-  sections.forEach(sec => {
+
+  const parentSelect = document.getElementById('newSectionParent');
+  if (parentSelect) {
+    parentSelect.innerHTML = '<option value="">-- مین سیکشن (کوئی نہیں) --</option>';
+    sections.forEach(s => {
+        parentSelect.appendChild(new Option(s.title, s.id));
+    });
+  }
+
+  const topLevel = sections.filter(s => !s.parent_id);
+  const childrenMap = {};
+  sections.forEach(s => {
+      if (s.parent_id) {
+          if (!childrenMap[s.parent_id]) childrenMap[s.parent_id] = [];
+          childrenMap[s.parent_id].push(s);
+      }
+  });
+
+  window.toggleSubsections = function(id) {
+     const el = document.getElementById('children-of-' + id);
+     const icon = document.getElementById('icon-of-' + id);
+     if (el) {
+         if (el.style.display === 'none') {
+             el.style.display = 'block';
+             if(icon) icon.className = 'fas fa-chevron-up';
+         } else {
+             el.style.display = 'none';
+             if(icon) icon.className = 'fas fa-chevron-down';
+         }
+     }
+  };
+
+  const renderItem = (sec, container, depth = 0) => {
     const div = document.createElement('div');
     div.className = 'manage-item';
     div.dataset.id = sec.id;
+    div.style.marginLeft = (depth * 2) + 'rem';
+    if (depth > 0) div.style.borderRight = '3px solid var(--gold)';
+    
+    const hasChildren = childrenMap[sec.id] && childrenMap[sec.id].length > 0;
+    let expandIcon = '<span style="display:inline-block; width:24px;"></span>';
+    if (hasChildren) {
+        expandIcon = `<i id="icon-of-${sec.id}" class="fas fa-chevron-up" style="cursor: pointer; padding: 5px; color: var(--teal);" onclick="toggleSubsections('${sec.id}')"></i>`;
+    }
+    
     div.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 1rem; cursor: grab;" class="sort-handle">
-        <i class="fas fa-grip-lines" style="color: #aaa; font-size: 1.2rem;"></i>
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-grip-lines sort-handle" style="color: #aaa; cursor:grab;"></i>
+        ${expandIcon}
       </div>
       <div class="manage-item-info" style="flex: 1;">
         <strong>${sec.title}</strong>
@@ -1692,8 +1737,20 @@ function renderSectionsList() {
         </button>
       </div>
     `;
-    list.appendChild(div);
-  });
+    container.appendChild(div);
+    
+    if (hasChildren) {
+        const childrenContainer = document.createElement('div');
+        childrenContainer.id = 'children-of-' + sec.id;
+        childrenContainer.style.display = 'block';
+        container.appendChild(childrenContainer);
+        childrenMap[sec.id].forEach(child => {
+           renderItem(child, childrenContainer, depth + 1);
+        });
+    }
+  };
+  
+  topLevel.forEach(sec => renderItem(sec, list, 0));
 
   if (typeof Sortable !== 'undefined') {
     new Sortable(list, {
@@ -1727,6 +1784,18 @@ window.editSection = function(catId, secId) {
   document.getElementById('editSectionNameInput').value = sec.title;
   document.getElementById('editSectionColorInput').value = currentColor;
   
+  const parentSelect = document.getElementById('editSectionParent');
+  if (parentSelect) {
+    parentSelect.innerHTML = '<option value="">-- مین سیکشن (کوئی نہیں) --</option>';
+    siteData.categories[catId].sections.forEach(s => {
+        if (s.id !== secId) { // Prevent selecting itself as parent
+            const opt = new Option(s.title, s.id);
+            if (s.id === sec.parent_id) opt.selected = true;
+            parentSelect.appendChild(opt);
+        }
+    });
+  }
+
   if (seriesData.series) {
     document.getElementById('editSectionSeriesInfo').textContent = `یہ رنگ '${series}' سیریز پر لاگو ہوگا۔`;
   } else {
@@ -1741,6 +1810,8 @@ document.getElementById('saveEditSectionBtn').addEventListener('click', () => {
   const secId = document.getElementById('editSectionId').value;
   const newName = document.getElementById('editSectionNameInput').value.trim();
   const color = document.getElementById('editSectionColorInput').value;
+  const parentSelect = document.getElementById('editSectionParent');
+  const parentId = parentSelect ? parentSelect.value : '';
 
   if (!newName) {
     showStatus('سیکشن کا نام درج کریں۔', 'error');
@@ -1750,6 +1821,11 @@ document.getElementById('saveEditSectionBtn').addEventListener('click', () => {
   const sec = siteData.categories[catId].sections.find(s => s.id == secId);
   if (sec) {
     sec.title = newName;
+    if (parentId) {
+        sec.parent_id = parentId;
+    } else {
+        delete sec.parent_id;
+    }
     const seriesData = extractSeriesAndSubtitle(newName);
     const series = seriesData.series || newName;
     
