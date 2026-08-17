@@ -722,7 +722,7 @@ function initApp() {
     if (currentSection.parent_id) {
        const parentSec = currentCategory.sections.find(s => s.id === currentSection.parent_id);
        if (parentSec) {
-         breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" onclick="renderSection('${categoryId}', '${parentSec.id}')" style="color:var(--gold);">${parentSec.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
+         breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" onclick="window.renderSectionHandler('${categoryId}', '${parentSec.id}')" style="color:var(--gold);">${parentSec.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
        }
     } else {
       breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
@@ -743,7 +743,7 @@ function initApp() {
            folderColor = currentCategory.seriesColors[sec.title];
          }
          const displayTitle = extractSeriesAndSubtitle(sec.title).subtitle || sec.title;
-         subHtml += `<div class="section-card" onclick="renderSection('${categoryId}', '${sec.id}')">
+         subHtml += `<div class="section-card" onclick="window.renderSectionHandler('${categoryId}', '${sec.id}')">
             <i class="fa-solid fa-folder" style="color: ${folderColor};"></i> <span title="${displayTitle}">${displayTitle}</span>
          </div>`;
        });
