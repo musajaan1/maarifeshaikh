@@ -143,6 +143,13 @@ function populateFooter() {
   const footer = siteData.footer;
   if (!footer) return;
 
+  if (footer.headingColor) {
+    const siteFooter = document.querySelector('.site-footer');
+    if (siteFooter) {
+      siteFooter.style.setProperty('--footer-heading-color', footer.headingColor);
+    }
+  }
+
   const aboutText = document.getElementById("footerAboutText");
   if (aboutText) aboutText.textContent = footer.aboutText || "";
 

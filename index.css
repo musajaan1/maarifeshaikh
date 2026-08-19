@@ -492,7 +492,7 @@ ul {
 }
 
 .footer-col h3 {
-  color: var(--gold);
+  color: var(--footer-heading-color, var(--gold));
   margin-bottom: 1.2rem;
   font-size: 1.3rem;
   font-weight: bold;
@@ -507,7 +507,7 @@ ul {
   right: 0;
   width: 30px;
   height: 2px;
-  background-color: var(--gold);
+  background-color: var(--footer-heading-color, var(--gold));
   opacity: 0.5;
 }
 

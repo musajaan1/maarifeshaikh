@@ -561,6 +561,9 @@ function initAdmin() {
     document.getElementById('footerEmail').value = footer.contactInfo?.email || '';
     document.getElementById('footerPhone').value = footer.contactInfo?.phone || '';
     document.getElementById('footerCopyright').value = footer.copyrightText || '';
+    if (document.getElementById('footerHeadingColor')) {
+      document.getElementById('footerHeadingColor').value = footer.headingColor || '#10b981';
+    }
     document.getElementById('footerFacebook').value = footer.socialLinks?.facebook || '';
     document.getElementById('footerYoutube').value = footer.socialLinks?.youtube || '';
     document.getElementById('footerWhatsapp').value = footer.socialLinks?.whatsapp || '';
@@ -585,6 +588,9 @@ function initAdmin() {
       siteData.footer.contactInfo.email = document.getElementById('footerEmail').value.trim();
       siteData.footer.contactInfo.phone = document.getElementById('footerPhone').value.trim();
       siteData.footer.copyrightText = document.getElementById('footerCopyright').value.trim();
+      if (document.getElementById('footerHeadingColor')) {
+        siteData.footer.headingColor = document.getElementById('footerHeadingColor').value;
+      }
       
       siteData.footer.socialLinks.facebook = document.getElementById('footerFacebook').value.trim();
       siteData.footer.socialLinks.youtube = document.getElementById('footerYoutube').value.trim();
