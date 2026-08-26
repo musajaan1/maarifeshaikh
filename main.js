@@ -381,7 +381,7 @@ function initApp() {
     if (tickerContainer && tickerSection) {
       const news = siteData.newsTicker || { items: [], settings: {} };
       const items = news.items || [];
-      const settings = news.settings || { speed: 15, pauseOnHover: true, bgColor: '#16a085', textColor: '#ffffff', direction: 'rtl' };
+      const settings = news.settings || { speed: 15, pauseOnHover: true, bgColor: '#16a085', textColor: '#ffffff', direction: 'rtl', labelBgType: 'solid', labelBgColor1: '#10b981', labelBgColor2: '#0f766e', labelTextColor: '#1e293b' };
       const direction = settings.direction || 'rtl';
       
       const newsArr = items.map(item => {
@@ -405,6 +405,24 @@ function initApp() {
       // Apply Settings
       tickerSection.style.backgroundColor = settings.bgColor;
       tickerSection.style.color = settings.textColor;
+      
+      const tickerLabel = tickerSection.querySelector('.ticker-label');
+      if (tickerLabel) {
+        const labelBgType = settings.labelBgType || 'solid';
+        const labelBgColor1 = settings.labelBgColor1 || '#10b981';
+        const labelBgColor2 = settings.labelBgColor2 || '#0f766e';
+        const labelTextColor = settings.labelTextColor || '#1e293b';
+        
+        tickerLabel.style.setProperty('color', labelTextColor, 'important'); // Force override of css
+        
+        if (labelBgType === 'gradient') {
+          tickerLabel.style.background = `linear-gradient(135deg, ${labelBgColor1}, ${labelBgColor2})`;
+          tickerLabel.style.backgroundColor = 'transparent'; // Reset solid
+        } else {
+          tickerLabel.style.background = 'none'; // Reset gradient
+          tickerLabel.style.backgroundColor = labelBgColor1;
+        }
+      }
       
       // Update animation speed and pause on hover via a dynamic style tag
       let dynStyle = document.getElementById('dynamicTickerStyles');

@@ -792,6 +792,12 @@ function initAdmin() {
     const textColor = document.getElementById('newsTextColor').value;
     const pauseOnHover = document.getElementById('newsPauseHover').checked;
     const direction = document.getElementById('newsDirection') ? document.getElementById('newsDirection').value : 'rtl';
+    
+    const labelBgType = document.getElementById('newsLabelBgType') ? document.getElementById('newsLabelBgType').value : 'solid';
+    const labelBgColor1 = document.getElementById('newsLabelBgColor1') ? document.getElementById('newsLabelBgColor1').value : '#10b981';
+    const labelBgColor2 = document.getElementById('newsLabelBgColor2') ? document.getElementById('newsLabelBgColor2').value : '#0f766e';
+    const labelTextColor = document.getElementById('newsLabelTextColor') ? document.getElementById('newsLabelTextColor').value : '#1e293b';
+    const labelBgStyle = labelBgType === 'gradient' ? `linear-gradient(135deg, ${labelBgColor1}, ${labelBgColor2})` : labelBgColor1;
 
     // Get current items
     const items = [];
@@ -840,9 +846,12 @@ function initAdmin() {
     `;
 
     previewDiv.innerHTML = `
-      <div class="preview-ticker-container" style="background-color: ${bgColor}; color: ${textColor}; padding: 10px 0; overflow: hidden; position: relative; white-space: nowrap; direction: ${direction};">
-        <div class="preview-ticker-content" dir="${direction}">
-          ${content}
+      <div class="preview-ticker-container" style="background-color: ${bgColor}; color: ${textColor}; padding: 10px 0; overflow: hidden; position: relative; white-space: nowrap; direction: ${direction}; display: flex; align-items: center;">
+        <div style="background: ${labelBgStyle}; color: ${labelTextColor}; padding: 5px 15px; font-weight: bold; border-radius: 4px; z-index: 2; margin-right: 10px; margin-left: 10px; flex-shrink: 0;">تازہ ترین خبریں</div>
+        <div style="flex-grow: 1; overflow: hidden;">
+          <div class="preview-ticker-content" dir="${direction}">
+            ${content}
+          </div>
         </div>
       </div>
     `;
@@ -981,7 +990,7 @@ function initAdmin() {
   function loadNewsData() {
     const news = siteData.newsTicker || { items: [], settings: {} };
     const items = news.items || [];
-    const settings = news.settings || { speed: 15, pauseOnHover: true, bgColor: '#16a085', textColor: '#ffffff', direction: 'rtl' };
+    const settings = news.settings || { speed: 15, pauseOnHover: true, bgColor: '#16a085', textColor: '#ffffff', direction: 'rtl', labelBgType: 'solid', labelBgColor1: '#10b981', labelBgColor2: '#0f766e', labelTextColor: '#1e293b' };
 
     document.getElementById('newsSpeed').value = settings.speed;
     document.getElementById('speedValue').textContent = settings.speed;
@@ -990,6 +999,14 @@ function initAdmin() {
     document.getElementById('newsPauseHover').checked = settings.pauseOnHover;
     if (document.getElementById('newsDirection')) {
       document.getElementById('newsDirection').value = settings.direction || 'rtl';
+    }
+    
+    if (document.getElementById('newsLabelBgType')) {
+      document.getElementById('newsLabelBgType').value = settings.labelBgType || 'solid';
+      document.getElementById('newsLabelColor2Container').style.display = (settings.labelBgType === 'gradient') ? 'block' : 'none';
+      document.getElementById('newsLabelBgColor1').value = settings.labelBgColor1 || '#10b981';
+      document.getElementById('newsLabelBgColor2').value = settings.labelBgColor2 || '#0f766e';
+      document.getElementById('newsLabelTextColor').value = settings.labelTextColor || '#1e293b';
     }
 
     const container = document.getElementById('newsItemsContainer');
@@ -1013,7 +1030,7 @@ function initAdmin() {
   }
 
   // Bind live preview events
-  const newsEvents = ['newsSpeed', 'newsBgColor', 'newsTextColor', 'newsPauseHover', 'newsDirection'];
+  const newsEvents = ['newsSpeed', 'newsBgColor', 'newsTextColor', 'newsPauseHover', 'newsDirection', 'newsLabelBgType', 'newsLabelBgColor1', 'newsLabelBgColor2', 'newsLabelTextColor'];
   newsEvents.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -1110,7 +1127,11 @@ function initAdmin() {
           pauseOnHover: document.getElementById('newsPauseHover').checked,
           bgColor: document.getElementById('newsBgColor').value,
           textColor: document.getElementById('newsTextColor').value,
-          direction: document.getElementById('newsDirection') ? document.getElementById('newsDirection').value : 'rtl'
+          direction: document.getElementById('newsDirection') ? document.getElementById('newsDirection').value : 'rtl',
+          labelBgType: document.getElementById('newsLabelBgType') ? document.getElementById('newsLabelBgType').value : 'solid',
+          labelBgColor1: document.getElementById('newsLabelBgColor1') ? document.getElementById('newsLabelBgColor1').value : '#10b981',
+          labelBgColor2: document.getElementById('newsLabelBgColor2') ? document.getElementById('newsLabelBgColor2').value : '#0f766e',
+          labelTextColor: document.getElementById('newsLabelTextColor') ? document.getElementById('newsLabelTextColor').value : '#1e293b'
         }
       };
 
