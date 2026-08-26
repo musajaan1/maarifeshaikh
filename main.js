@@ -192,8 +192,9 @@ function populateFooter() {
     footerCatList.innerHTML = '';
     Object.keys(siteData.categories).forEach(catId => {
       const cat = siteData.categories[catId];
+      const catSlug = encodeURIComponent(generateSlug(cat.title));
       const li = document.createElement('li');
-      li.innerHTML = `<a href="#" data-category="${catId}" class="footer-dyn-cat">${cat.title}</a>`;
+      li.innerHTML = `<a href="/${catSlug}" data-category="${catId}" class="footer-dyn-cat">${cat.title}</a>`;
       footerCatList.appendChild(li);
     });
     
@@ -622,7 +623,7 @@ function initApp() {
     currentCategory = siteData.categories[categoryId];
     
     const breadcrumb = document.getElementById("catBreadcrumb");
-    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentCategory.title}`;
+    breadcrumb.innerHTML = `<a href="/" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentCategory.title}`;
     
     const title = document.getElementById("catTitle");
     title.textContent = currentCategory.title;
@@ -729,10 +730,13 @@ function initApp() {
     if (currentSection.parent_id) {
        const parentSec = currentCategory.sections.find(s => s.id === currentSection.parent_id);
        if (parentSec) {
-         breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" onclick="window.renderSectionHandler('${categoryId}', '${parentSec.id}')" style="color:var(--gold);">${parentSec.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
+         const catSlug = encodeURIComponent(generateSlug(currentCategory.title));
+         const parentSecSlug = encodeURIComponent(generateSlug(parentSec.title));
+         breadcrumb.innerHTML = `<a href="/" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="/${catSlug}" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="/${catSlug}/${parentSecSlug}" onclick="window.renderSectionHandler('${categoryId}', '${parentSec.id}'); return false;" style="color:var(--gold);">${parentSec.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
        }
     } else {
-      breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
+      const catSlug = encodeURIComponent(generateSlug(currentCategory.title));
+      breadcrumb.innerHTML = `<a href="/" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="/${catSlug}" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${currentSection.title}`;
     }
     
     const title = document.getElementById("secTitle");
@@ -1056,7 +1060,9 @@ function initApp() {
     });
 
     const breadcrumb = document.getElementById("singleBreadcrumb");
-    breadcrumb.innerHTML = `<a href="#" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="#" onclick="window.renderSectionHandler('${categoryId}', '${sectionId}'); return false;">${currentSection.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${item.title}`;
+    const catSlug = encodeURIComponent(generateSlug(currentCategory.title));
+    const secSlug = encodeURIComponent(generateSlug(currentSection.title));
+    breadcrumb.innerHTML = `<a href="/" class="nav-home">ہوم</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="/${catSlug}" class="nav-cat" data-category="${categoryId}">${currentCategory.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> <a href="/${catSlug}/${secSlug}" onclick="window.renderSectionHandler('${categoryId}', '${sectionId}'); return false;">${currentSection.title}</a> <span class="bc-sep"><i class="fas fa-chevron-left"></i></span> ${item.title}`;
     
     document.getElementById("singleTitle").textContent = item.title;
     
@@ -1317,7 +1323,8 @@ function initApp() {
         if (catId === 'cat') icon = 'fa-music'; // the new category they created
 
         const a = document.createElement('a');
-        a.href = "#";
+        const catSlug = encodeURIComponent(generateSlug(cat.title));
+        a.href = '/' + catSlug;
         a.className = "cat-btn";
         a.dataset.category = catId;
         a.innerHTML = `<i class="fas ${icon}"></i> <span>${cat.title}</span>`;
